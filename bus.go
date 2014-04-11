@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"appengine"
+	"strconv"
 )
 
 const baseURL = "http://www.corvallistransit.com/"
@@ -15,6 +16,7 @@ func init() {
 	http.HandleFunc("/platforms", platforms)
 	http.HandleFunc("/routes", routes)
 	http.HandleFunc("/patterns", patterns)
+	http.HandleFunc("/cron/init", CTS_InfoInit)
 }
 
 func routes(w http.ResponseWriter, r *http.Request) {
@@ -23,8 +25,9 @@ func routes(w http.ResponseWriter, r *http.Request) {
 	c := cts.New(context, baseURL)
 
 	//Create Platform (Need tag or number)
+	intVal, _ := strconv.ParseInt(r.FormValue("tag"), 10, 64)
 	p := &cts.Platform{
-		Tag: r.FormValue("tag"),
+		Tag: intVal,
 	}
 
 	//Update ETA

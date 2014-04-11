@@ -1,7 +1,6 @@
 package corvallisbus
 
 import (
-	"appengine"
 	"appengine/datastore"
 	"time"
 )
@@ -33,7 +32,7 @@ type Route struct {
 	URL         string
 
 	// https://developers.google.com/maps/documentation/utilities/polylinealgorithm
-	Polyline string
+	Polyline string `datastore:",noindex"` // Needed due to length
 	Color    string // Route color stored as hexadecimal
 
 	Direction string
@@ -59,9 +58,9 @@ type Stop struct {
 
 	Name string
 
-	RoadName       string
-	BearingToRoad  float64
-	AdherancePoint bool // Stops where bus will stop until scheduled departure time
+	Road           string  // Road Name
+	Bearing        float64 // Bearing to road
+	AdherancePoint bool    // Stops where bus will stop until scheduled departure time
 
 	Lat  float64
 	Long float64
