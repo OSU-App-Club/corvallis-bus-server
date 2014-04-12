@@ -3,7 +3,13 @@ package corvallisbus
 import (
 	"appengine"
 	"appengine/datastore"
+	"archive/zip"
+	"bytes"
+	"encoding/csv"
 	cts "github.com/cvanderschuere/go-connexionz"
+	"github.com/jlaffaye/ftp"
+	"io"
+	"io/ioutil"
 	"net/http"
 )
 
@@ -25,29 +31,30 @@ func CTS_InfoInit(w http.ResponseWriter, r *http.Request) {
 	updatePlatforms(plats, c)
 
 	// Create map between platform tag and platform number -- GoogleTransit uses tag
-	// tag -> number
+	// tag -> number (GT -> connexionz)
 	tagToNumber := make(map[int64]int64)
 	for _, p := range plats {
 		tagToNumber[p.Tag] = p.Number
 	}
 
 	// Create map between pattern names in Connexionz and GT (static for now)
-	// connexionz -> GT
+	// GT -> connexionz
 	nameMap := map[string]string{
-		"1":    "R1",
-		"2":    "R2",
-		"3":    "R3",
-		"4":    "R4",
-		"5":    "R5",
-		"6":    "R6",
-		"7":    "R7",
-		"8":    "R8",
-		"BBN":  "BB_N",
-		"BBSE": "BB_SE",
-		"BBSW": "BB_SW",
-		"C1":   "C1",
-		"C2":   "C2",
-		"C3":   "C3",
+		"R1":    "1",
+		"R2":    "2",
+		"R3":    "3",
+		"R4":    "4",
+		"R5":    "5",
+		"R6":    "6",
+		"R7":    "7",
+		"R8":    "8",
+		"BB_N":  "BBN",
+		"BB_SE": "BBSE",
+		"BB_SW": "BBSW",
+		"C1":    "C1",
+		"C2":    "C2",
+		"C3":    "C3",
+		"CVA":   "CVA",
 	}
 
 	// Download/parse/input Google Transit
@@ -168,6 +175,110 @@ func updatePlatforms(platforms []*cts.Platform, c appengine.Context) error {
  * Service Exceptions (calendar_dates.txt)
  */
 func updateWithGoogleTransit(c appengine.Context, tagToNumber map[int64]int64, routeNameConversion map[string]string) error {
+
+	//
+	// Download Information
+	//
+
+	// Connect to ftp
+	ftpCon, connErr := ftp.Connect("ftp.ci.corvallis.or.us:21") // Port 21 in default for FTP
+	if connErr != nil {
+		c.Errorf("Zip Read Error (FTP Connect): ", connErr)
+		return connErr
+	}
+
+	// Login (Need to do but doesn't matter values)
+	errLogin := ftpCon.Login("anonymous", "anonymous")
+	if errLogin != nil {
+		c.Errorf("Zip Login Error (FTP Login): ", errLogin)
+		return errLogin
+	}
+
+	file, err := ftpCon.Retr("/pw/Transportation/GoogleTransitFeed/Google_Transit.zip")
+	if err != nil {
+		c.Errorf("Zip Read Error (FTP): ", err)
+		return err
+	}
+
+	bs, errRead := ioutil.ReadAll(file)
+	file.Close()
+	if errRead != nil {
+		c.Errorf("Zip Read Error: ", errRead)
+		return errRead
+	}
+
+	//
+	// Unzip
+	//
+
+	reader := bytes.NewReader(bs)
+
+	zipFile, zipError := zip.NewReader(reader, int64(len(bs)))
+	if zipError != nil {
+		c.Errorf("Zip Inter Error: ", zipError)
+		return zipError
+	}
+
+	//Convert into map between filename and information
+	fileMap := make(map[string]io.ReadCloser)
+	for _, f := range zipFile.File {
+		r, _ := f.Open()
+		defer r.Close()
+		fileMap[f.Name] = r
+	}
+
+	//
+	// Use each file to provide particular information (reference by filename)
+	//
+
+	// routes.txt (color, long name, description, url)
+	r := csv.NewReader(fileMap["routes.txt"])
+	records, _ := r.ReadAll()
+
+	// Read all routes from datastore
+	var routes []*Route
+	keys, _ := datastore.NewQuery("Route").GetAll(c, &routes)
+
+	// Convert to map -- easier access
+	routeMap := make(map[string]*Route)
+	keyMap := make(map[string]*datastore.Key)
+	for i, route := range routes {
+		routeMap[route.Name] = route
+		keyMap[route.Name] = keys[i] // Store key for storing later
+	}
+
+	// Format of record
+	// route_name[0], long_name[3], desc[4], url[6], color[7]
+	for _, record := range records[1:] {
+		// Get this route
+		key, ok := routeNameConversion[record[0]]
+		if !ok {
+			continue //No matching route in connexionz
+		}
+
+		route := routeMap[key] // Route by GT name
+
+		//Update information
+		route.AdditionalName = record[3]
+		route.Description = record[4]
+		route.URL = record[6]
+		route.Color = record[7]
+
+		// Update in datastore
+		datastore.Put(c, keyMap[route.Name], route)
+	}
+
+	// calendar.txt (service_id[0], monday->friday[1:7], startDate[8], endDate[9])
+	// map[service_id] Sched
+
+	// trips.txt (route_id[0],service_id[1],trip_id[2])
+	// Find mappings between values that are only present in GT information
+
+	// map[service_id] route_id -- can actually be a direct if calendar.txt is done first
+
+	// map[trip_id] route_id -- used in stop_times.txt
+
+	// stop_times.txt (trip_id[0],)
 
 	return nil
 }
