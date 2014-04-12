@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"appengine"
+	"appengine/datastore"
 	"strconv"
 )
 
@@ -16,7 +17,40 @@ func init() {
 	http.HandleFunc("/platforms", platforms)
 	http.HandleFunc("/routes", routes)
 	http.HandleFunc("/patterns", patterns)
+	http.HandleFunc("/routes_list", routes_list)
 	http.HandleFunc("/cron/init", CTS_InfoInit)
+}
+
+func routes_list(w http.ResponseWriter, r *http.Request) {
+	context := appengine.NewContext(r)
+
+	//c := cts.New(context, baseURL)
+
+
+		w.Header().Set("Content-Type", "application/json")
+
+	// Read all routes from datastore
+	var routes []*Route
+	datastore.NewQuery("Route").GetAll(context, &routes)
+
+	for _, route := range routes {
+		fmt.Fprint(w, "Route: ", route.Name, "\n")
+
+		for _, stopkey := range route.Stops {
+			var stop Stop
+			datastore.Get(context, stopkey, &stop)
+
+			fmt.Fprint(w, "\tName: ", stop.Name, "Lat/long: ", stop.Lat, stop.Long, "\n")
+		}
+		fmt.Fprint(w, "\n\n\n")
+	}
+
+	//Return as json
+	//data, errJSON := json.Marshal(routes)
+	//if errJSON != nil {
+	//	http.Error(w, errJSON.Error(), 500)
+	//	return
+	//}
 }
 
 func routes(w http.ResponseWriter, r *http.Request) {

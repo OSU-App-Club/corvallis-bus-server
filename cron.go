@@ -11,6 +11,9 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"time"
+	"strconv"
+	"sort"
 )
 
 // Sets up datastore to fit current structure -- removes all existing
@@ -256,7 +259,7 @@ func updateWithGoogleTransit(c appengine.Context, tagToNumber map[int64]int64, r
 			continue //No matching route in connexionz
 		}
 
-		route := routeMap[key] // Route by GT name
+		route := routeMap[key] // Route by Connexionz name
 
 		//Update information
 		route.AdditionalName = record[3]
@@ -268,11 +271,132 @@ func updateWithGoogleTransit(c appengine.Context, tagToNumber map[int64]int64, r
 		datastore.Put(c, keyMap[route.Name], route)
 	}
 
-	// calendar.txt (service_id[0], monday->friday[1:7], startDate[8], endDate[9])
-	// map[service_id] Sched
-
 	// trips.txt (route_id[0],service_id[1],trip_id[2])
 	// Find mappings between values that are only present in GT information
+
+	r = csv.NewReader(fileMap["trips.txt"])
+	records, _ = r.ReadAll()
+
+	// Create map: trip_id -> connexionz route name
+	tripIDMap := make(map[string]string)
+	for _, record := range records[1:] {
+		connexionzRouteName, ok := routeNameConversion[record[0]]
+		if ok{
+				tripIDMap[record[2]] = connexionzRouteName
+		}
+	}
+
+	// Loop through stop_times.txt and add to appropriate stop
+	r = csv.NewReader(fileMap["stop_times.txt"])
+	records, _ = r.ReadAll()
+
+	scheduleRouteMap := make(map[string]([]*SchedInfo)) // trip_id -> SchedInfo
+
+	// Build map of schedule points
+	for _, record := range records[1:] {
+
+		identifer,_ := strconv.Atoi(record[4])
+		arrivalTime,_ := time.Parse("15:04:05",record[1])
+
+		newS := &SchedInfo{
+			arrive:arrivalTime,
+			id: identifer,
+		}
+
+		schedSlice,ok := scheduleRouteMap[record[0]]
+		if !ok{
+			// Make new entry for this trip_id
+			scheduleRouteMap[record[0]] = []*SchedInfo{newS}
+		}else{
+				// Append schedInfo to existing slice
+				schedSlice = append(schedSlice,newS)
+				scheduleRouteMap[record[0]] = schedSlice
+		}
+	}
+
+	// Loop over each sub-route -- sort SchedInfo
+	for trip_id,stops := range scheduleRouteMap{
+
+		// Get related Route from datastore
+		connexionzRouteName,ok := tripIDMap[trip_id]
+		if !ok{
+			continue // Not a route that we handle
+		}
+
+		route := routeMap[connexionzRouteName] // Route by Connexionz name
+		routeKey := keyMap[connexionzRouteName] // Key for above route
+
+		// Sort arrivals by stop sequence
+		sort.Sort(ByID(stops))
+
+		// Enter initial point --Arrival Objects
+		newArrivalKey := datastore.NewIncompleteKey(c,"Arrival",route.Stops[0])
+		newArrival := Arrival{
+			Route: routeKey,
+			Scheduled: stops[0].arrive,
+			IsScheduled: true,
+		}
+
+		datastore.Put(c,newArrivalKey,&newArrival)
+
+		for i := 0; i<len(stops); i++{
+			if !stops[i].arrive.IsZero(){
+
+				if i == len(stops) - 1 {
+					break
+				}
+				
+				//Keep going until we find next known point
+				var j int
+				for j = i+1;j<len(stops);j++{
+					if !stops[j].arrive.IsZero(){
+						break
+					}
+				}
+
+				c.Debugf("J: %d  Length of stops: %d\n", j, len(stops))
+
+				// j is equal to index of next zero
+				diff := j-i
+				diffSeconds := stops[j].arrive.Sub(stops[i].arrive).Seconds()
+
+				changeSeconds := int(diffSeconds)/diff
+				changeDir := time.Duration(time.Duration(changeSeconds) * time.Second)
+
+				// Enter middle points
+				for midI,stop := range stops[i+1:j]{
+					newArrivalKey = datastore.NewIncompleteKey(c,"Arrival",route.Stops[midI+(i+1)])
+					newArrival = Arrival{
+						Route: routeKey,
+						Scheduled: stop.arrive.Add(changeDir * time.Duration(midI+1)),
+						IsScheduled: false,
+					}
+
+					datastore.Put(c,newArrivalKey,&newArrival)
+				}
+
+				// Enter last point (known point)
+				newArrivalKey = datastore.NewIncompleteKey(c,"Arrival",route.Stops[j])
+				newArrival = Arrival{
+					Route: routeKey,
+					Scheduled: stops[j].arrive,
+					IsScheduled: true,
+				}
+
+				datastore.Put(c,newArrivalKey,&newArrival)
+
+				i = j - 1 // Skip to next chunk
+
+			}else{
+				// Will always have known point at start and end
+				c.Errorf("Unexpected behavior in scheduleRoute")
+			}
+		}
+
+	}
+
+	// calendar.txt (service_id[0], monday->friday[1:7], startDate[8], endDate[9])
+	// map[service_id] Sched
 
 	// map[service_id] route_id -- can actually be a direct if calendar.txt is done first
 
@@ -282,6 +406,18 @@ func updateWithGoogleTransit(c appengine.Context, tagToNumber map[int64]int64, r
 
 	return nil
 }
+
+// Temp structure for schedule input
+type SchedInfo struct{
+	arrive time.Time
+	id	int
+}
+
+type ByID []*SchedInfo
+
+func (a ByID) Len() int           { return len(a) }
+func (a ByID) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a ByID) Less(i, j int) bool { return a[i].id < a[j].id }
 
 // Don't forget to call AllocateIDs to prevent overlap with previous keys
 // func AllocateIDs(c appengine.Context, kind string, parent *Key, n int) (low, high int64, err error)
