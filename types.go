@@ -38,22 +38,8 @@ type Route struct {
 	Direction string
 	Stops     []*datastore.Key // (type Stop) organized by order travelled
 
-	Schedule Sched // Days this route runs on
-}
-
-type Sched struct {
-	// Not stored directly
-
-	Monday    bool
-	Tuesday   bool
-	Wednesday bool
-	Thursday  bool
-	Friday    bool
-	Saturday  bool
-	Sunday    bool
-
-	Start time.Time // Begining of validity
-	End   time.Time // End of validity
+	Start time.Time // Begining of validity of arrivals
+	End   time.Time // End of validity of arrivals
 }
 
 type Stop struct {
@@ -78,12 +64,21 @@ type Arrival struct {
 
 	Route *datastore.Key
 
-	Scheduled time.Time
-	Expected  time.Time // Calculated from ETA when within 30 minutes of arrival
+	Scheduled time.Duration
+	//Expected  time.Duration // Calculated from ETA when within 30 minutes of arrival
 
 	IsScheduled bool // true for values with known schedule times -- others are estimates
 
 	//Destination *datastore.Key // Link to destination stop -- needed?
+
+	// What days of the week this arrival is valid on
+	Monday    bool
+	Tuesday   bool
+	Wednesday bool
+	Thursday  bool
+	Friday    bool
+	Saturday  bool
+	Sunday    bool
 }
 
 // https://developers.google.com/transit/gtfs/reference?csw=1#calendar_dates_fields

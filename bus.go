@@ -18,7 +18,7 @@ func init() {
 	http.HandleFunc("/routes", routes)
 	http.HandleFunc("/patterns", patterns)
 	http.HandleFunc("/routes_list", routes_list)
-	http.HandleFunc("/cron/init", CTS_InfoInit)
+	http.HandleFunc("/cron/init", CreateDatabase)
 }
 
 func routes_list(w http.ResponseWriter, r *http.Request) {
@@ -26,21 +26,20 @@ func routes_list(w http.ResponseWriter, r *http.Request) {
 
 	//c := cts.New(context, baseURL)
 
-
-		w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json")
 
 	// Read all routes from datastore
 	var routes []*Route
 	datastore.NewQuery("Route").GetAll(context, &routes)
 
 	for _, route := range routes {
-		fmt.Fprint(w, "Route: ", route.Name, "\n")
+		fmt.Fprint(w, "Route: ", route.Name, "\n", "len: ", len(route.Stops), "\n")
 
 		for _, stopkey := range route.Stops {
 			var stop Stop
 			datastore.Get(context, stopkey, &stop)
 
-			fmt.Fprint(w, "\tName: ", stop.Name, "Lat/long: ", stop.Lat, stop.Long, "\n")
+			fmt.Fprint(w, "\t", stop.Name, "\t\t\t", stopkey.IntID(), "\n")
 		}
 		fmt.Fprint(w, "\n\n\n")
 	}
@@ -95,15 +94,22 @@ func platforms(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//Return as json
-	data, errJSON := json.Marshal(platforms)
-	if errJSON != nil {
-		http.Error(w, errJSON.Error(), 500)
-		return
+	for _, plat := range platforms {
+		fmt.Fprintf(w, "Name: ", plat.Name, "Number: ", plat.Number, "\n")
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, string(data))
+	/*
+		//Return as json
+		data, errJSON := json.Marshal(platforms)
+		if errJSON != nil {
+			http.Error(w, errJSON.Error(), 500)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprint(w, string(data))
+
+	*/
 }
 
 func patterns(w http.ResponseWriter, r *http.Request) {

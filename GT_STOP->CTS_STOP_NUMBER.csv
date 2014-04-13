@@ -1,0 +1,476 @@
+stop_id,stop_code,stop_name,stop_lat,stop_lon
+10thSt_E_BecaAve,13709,Highland & Beca,44.577330406,-123.262564056
+10thSt_E_BuchananAve,13713,10th & Buchanan,44.576061168,-123.263289933
+10thSt_E_DraperPl,13685,Highland & Grant,44.579153453,-123.26247507
+10thSt_W_BecaAve,,10th & Beca,44.577981724,-123.262629636
+11thSt_W_FillmoreAve,,11th & Fillmore,44.572781062,-123.266404812
+11thSt_W_HarrisonBlvd,,11th & Harrison,44.569194271,-123.268131334
+11thSt_W_MonroeAve,,11th & Monroe,44.566714513,-123.26935285
+11thSt_W_PierceWay,,11th & Pierce/Corvallis High School [Shelter],44.574713381,-123.265449749
+11thSt_W_TylerAve,,11th & Tyler,44.570225912,-123.267620319
+14thAve_N_DavidsonSt,,14th at Heritage Mall,44.628868,-123.079552
+14thSt_E_JeffersonAve,,14th & Jefferson/OSU [Shelter],44.565029211,-123.273597394
+15thSt_E_JeffersonWay,13212,15th & Jefferson/OSU [Shelter],44.563954907,-123.274047463
+15thSt_E_WesternBlvd,13188,15th & Western,44.5603757,-123.274013187
+15thSt_W_JeffersonWay,13220,15th & Jefferson/OSU [Shelter],44.564159807,-123.27420318
+15thSt_W_WashingtonWay,13190,15th & A/OSU,44.56147447,-123.274381819
+24thSt_E_NewtonSt,,24th & Newton,44.540648037,-123.350145403
+24thSt_W_NewtonSt,,24th & Newton,44.540491417,-123.350360041
+26thSt_E_CampusWay,12703,26th & Campus Way,44.567011906,-123.279837498
+26thSt_E_IntramuralWay,12719,Dixon Rec Center/OSU,44.563508957,-123.27954305
+26thSt_E_JeffersonWay,12695,OSU Bookstore - MU,44.56485698,-123.279867241
+26thSt_E_RalphMillerLn,14360,Gill Coliseum/OSU,44.560015811,-123.279509999
+26thSt_E_WesternBlvd,12431,LaSells Stewart Ctr/OSU,44.558992785,-123.27945061
+26thSt_W_IntramuralWay,12719,Dixon Rec Center/OSU,44.56338661,-123.279705449
+26thSt_W_RalphMillerLn,14360,Gill Coliseum/OSU,44.560011334,-123.279852557
+26thSt_W_WesternBlvd,,LaSells Stewart Ctr/OSU,44.558917731,-123.279799907
+28thAve_S_MadisonSt,,28th & Madison,44.614735,-123.090996
+29thSt_E_CircleBlvd,11101,29th & Circle,44.586175151,-123.283017449
+29thSt_E_FillmoreAve,12676,29th & Fillmore,44.575846682,-123.283170662
+29thSt_E_GarfieldAve,12546,29th & Garfield,44.58342023,-123.283011524
+29thSt_E_GrantAve,12567,29th & Grant [Shelter],44.578960618,-123.282975602
+29thSt_E_MulkeyAve,12551,29th & Mulkey,44.580938119,-123.282997204
+29thSt_E_PolkAve,12682,29th & Tyler,44.573331796,-123.283318607
+29thSt_N_ArrowoodCir,12514,29th & Arrowood [Shelter],44.595892852,-123.287140176
+29thSt_N_WalnutBlvd,12522,29th & Walnut,44.594381091,-123.284169471
+29thSt_W_CircleBlvd,12630,29th & Circle,44.586200546,-123.283202823
+29thSt_W_FillmoreAve,12598,29th & Fillmore,44.575224574,-123.283342331
+29thSt_W_GarfieldAve,12624,29th & Garfield,44.58283426,-123.283169055
+29thSt_W_GrantAve,12611,29th & Grant,44.578239275,-123.283132502
+29thSt_W_MulkeyAve,12580,29th & Mulkey,44.580224589,-123.283155717
+29thSt_W_TylerAve,12579,29th & Tyler [Shelter],44.572413003,-123.283502145
+2ndAve_S_BakerSt,,2nd & Baker,44.636673,-123.103279
+2ndAve_S_ThurstonSt,,2nd & Thurston,44.637444,-123.097359
+2ndSt_E_HarrisonBlvd,,2nd & Harrison,44.566778456,-123.258348974
+2ndSt_E_PolkAve_A,,2nd & Polk,44.569297624,-123.257044519
+2ndSt_E_PolkAve_B,,Holiday Inn Express,44.571463337,-123.255603089
+2ndSt_W_JeffersonAve,,2nd & Jefferson,44.562492827,-123.260718605
+2ndSt_W_MonroeAve,,2nd & Monroe,44.564228674,-123.259881804
+2ndSt_W_PolkAve,,Holiday Inn Express,44.571516214,-123.255866331
+2ndSt_W_RenniePl_A,,2nd & Rennie,44.573922134,-123.25367056
+2ndSt_W_RenniePl_B,,2nd & South of Rennie,44.572661731,-123.254864049
+2ndSt_W_Tyler,,2nd & Polk,44.56851667,-123.257707126
+2ndSt_W_VanBurenAve,,2nd & Van Buren,44.565864323,-123.259050161
+2ndSt_W_WashingtonAve,,2nd & Washington,44.559715536,-123.262200345
+30thSt_E_ApplegateSt,,30th & Applegate,44.539377607,-123.34037467
+30thSt_E_SouthwoodDr,,30th & Southwood,44.535597733,-123.34056402
+30thSt_E_SunroseCt,,30th & James,44.541349008,-123.339827855
+30thSt_W_ApplegateSt,,30th & Applegate,44.53933659,-123.340655084
+30thSt_W_SouthwoodDr,,30th & Southwood,44.535623756,-123.340835839
+30thSt_W_SunroseCt,,30th & James,44.541411291,-123.340156754
+34thAve_N_CalapooiaSt,,34th & Calapooia,44.610268,-123.106674
+34thAve_N_ColumbusSt,,24th & Columbus,44.610535,-123.080093
+34thAve_N_HillSt,,34th & Hill,44.61042,-123.089897
+34thAve_N_MarionSt,,34th & Marion [Shelter],44.610313,-123.09861
+34thAve_N_OakSt,,34th / Oak,44.610466,-123.085464
+34thAve_S_FerrySt,,34th & Ferry,44.60997,-123.102058
+34thAve_S_PacificBlvd,,34th & Pacific,44.609848,-123.113075
+35thSt_E_BirdieDr,11795,35th & Birdie/Adams School [Shelter],44.55253812,-123.289476183
+35thSt_E_HilWoodPl,11782,35th & Hil-wood,44.555368136,-123.289492346
+35thSt_E_KnollbrookAve,11805,35th & Knollbrook,44.548957846,-123.289547064
+36thSt_E_FillmoreAve,14612,36th & Fillmore,44.5760796,-123.29083929
+36thSt_E_TylerAve,14608,36th & Tyler,44.572972442,-123.290802959
+36thSt_E_WithamHillDr,14620,36th & Witham Hill,44.57813717,-123.290862137
+36thSt_W_FillmoreAve,14736,36th & Fillmore,44.575256157,-123.291007544
+36thSt_W_LincolnAve,14727,36th & Lincoln,44.576753666,-123.291036921
+36thSt_W_PolkAve,14743,36th & Polk,44.573372596,-123.29097878
+3rdSt_E_MayberryAve,,South 3rd & Mayberry,44.546732333,-123.265597842
+3rdSt_E_ParkAve,,South 3rd & Park,44.539343791,-123.266185019
+3rdSt_E_RichlandAve,,South 3rd & Richland,44.542628809,-123.265962234
+3rdSt_E_TwinOaksCir,11954,South 3rd & Twin Oaks [Shelter],44.553749719,-123.264746031
+3rdSt_W_AlexanderAve,12892,South 3rd & Alexander/Lincoln School,44.544653994,-123.266080588
+3rdSt_W_AveryAve,13001,South 3rd & Avery,44.55155539,-123.26536413
+3rdSt_W_BridgewayAve,12871,South 3rd & Bridgeway,44.549943599,-123.265519868
+3rdSt_W_LillyAve,13017,South 3rd & Lilly,44.548512253,-123.265706881
+3rdSt_W_MayberryAve,12885,South 3rd & Mayberry [Shelter],44.546699141,-123.265901427
+3rdSt_W_ParkAve,12918,South 3rd & Park,44.539362393,-123.266670026
+3rdSt_W_RichlandAve,12902,South 3rd & Richland,44.542171541,-123.266347683
+3rdSt_W_TwinOaksCir,12994,South 3rd & Twin Oaks [Shelter],44.553767841,-123.265117853
+49thSt_E_CountryClubDr,10137,49th & Country Club,44.546016224,-123.306631653
+49thSt_E_RoseberrySt,10163,49th & Roseberry,44.547127862,-123.30661586
+49thSt_E_TechnologyLp,10185,49th & Tech Loop [Shelter],44.549036816,-123.308219654
+49thSt_W_CountryClubDr,10144,49th & Country Club,44.545905838,-123.306806656
+49thSt_W_RoseberrySt,10159,49th & Roseberry,44.547143472,-123.306820026
+49thSt_W_TechnologyLp,10171,49th & Tech Loop [Shelter],44.548375121,-123.308380384
+4thAve_N_EllsworthSt,,Albany City Hall (4th),44.63493,-123.106117
+4thSt_W_MadisonAve,,4th St (btwn Madison & Jefferson),44.563236,-123.262825
+4thSt_W_WashingtonAve,12859,4th & Washington [Shelter],44.5609773,-123.263979688
+4thSt_W_WesternBlvd,12863,4th & Western,44.559443203,-123.264725087
+53rdSt_E_CountryClubDr,,53rd & Country Club,44.54614533,-123.311940057
+53rdSt_E_HelenAve,,53rd & Helen,44.552702575,-123.311955325
+53rdSt_E_PhilomathBlvd,,53rd & Philomath Blvd,44.550215841,-123.31190494
+53rdSt_E_TechnologyLp,,53rd & Technology,44.549246807,-123.311931351
+53rdSt_W_CampusWay,,53rd at County Fairgrounds,44.566955904,-123.312147799
+53rdSt_W_CherryAve,,53rd & Cherry,44.560874365,-123.312117015
+53rdst_W_CountryClubDr,10116,53rd & Country Club [Shelter],44.546036952,-123.312175893
+53rdSt_W_ElRanchoAve,10100,53rd & El Rancho,44.548332906,-123.312191849
+53rdSt_W_HarrisonBlvd_A,,53rd & Harrison [Shelter],44.570143415,-123.312228242
+53rdSt_W_HarrisonBlvd_B,,53rd & Redgate,44.568623731,-123.312194047
+53rdSt_W_HelenAve,,53rd & Helen,44.552731913,-123.312111194
+53rdSt_W_PhilomathBlvd,10090,53rd & Philomath Blvd,44.550370104,-123.312148839
+53rdSt_W_ReservoirAve,,53rd & Reservoir,44.563791618,-123.312168467
+53rdSt_W_TechnologyLp,,53rd & Technology,44.54969991,-123.312156731
+53rdSt_W_WestHillsRd,,53rd & West Hills,44.55613306,-123.312156873
+53rdSt_W_WillowAve,,53rd & Willow,44.558918952,-123.312058052
+5thSt_E_BuchananAve,13721,5th & Buchanan,44.572657014,-123.258944848
+5thSt_E_PolkAve,12828,5th & Polk [Shelter],44.570085448,-123.260245479
+5thSt_W_BuchananAve,12800,5th & Buchanan,44.57270211,-123.25914699
+5thSt_W_HarrisonBlvd,12837,5th & Harrison,44.568251021,-123.26135901
+5thSt_W_PolkAve_A,12816,5th & Fillmore,44.570677164,-123.2601151
+5thSt_W_PolkAve_B,,5th & Polk,44.56934181,-123.260796164
+7thAve_N_ElmSt,,7th / Elm at Albany General Hospital [Shelter],44.631618,-123.114723
+7thAve_N_Washington,,7th & Washington,44.632198,-123.109467
+7thSt_W_ApplegateSt,,Main & 7th,44.539403367,-123.377022609
+9thAve_S_OakSt,,9th & Oak,44.632942,-123.086815
+9thSt_E_BuchananAve,10775,9th & Buchanan [Shelter],44.576787985,-123.261357717
+9thSt_E_CircleBlvd,10396,9th & Circle,44.589143349,-123.254578666
+9thSt_E_FremontAve,10752,Avery Square,44.571603745,-123.264284324
+9thSt_E_GarfieldAve,10417,9th & Garfield [Shelter],44.583324825,-123.257745634
+9thSt_E_GrantAve,10438,9th & Grant,44.579791418,-123.259749226
+9thSt_E_HayesAve,10429,9th & Hayes,44.581678319,-123.258687287
+9thSt_E_JacksonAve,10734,9th & Jackson,44.567205293,-123.266582524
+9thSt_E_MadisonAve,10723,9th & Madison [Shelter],44.565183995,-123.267572889
+9thSt_E_MaxineAve,10911,9th & Maxine,44.597506575,-123.24993221
+9thSt_E_ReimanAve,10768,9th & Reiman [Shelter],44.573180723,-123.263334623
+9thSt_E_SequolaAve,10799,9th & Sequoia,44.591419507,-123.253302183
+9thSt_E_SpruceAve,10401,9th & Spruce,44.586307216,-123.256087894
+9thSt_E_TylerAve,10747,9th & Tyler,44.570360455,-123.264981403
+9thSt_E_WalnutBlvd,10365,9th & Walnut,44.594376782,-123.251655647
+9thSt_S_MainSt,,9th & Main,44.632504,-123.090736
+9thSt_W_BuchananAve,10706,9th & Buchanan,44.575004095,-123.262686968
+9thSt_W_CircleBlvd,11004,9th & Circle [Shelter],44.588135014,-123.255402285
+9thSt_W_ConiferBlvd,,9th & Conifer,44.59655135,-123.250731734
+9thSt_W_CornellAve,10354,9th & Cornell [Shelter],44.577100518,-123.26153168
+9thSt_W_GarfieldAve,10673,9th & Garfield,44.584553667,-123.257447317
+9thSt_W_GrantAve,10349,9th & Grant,44.580085223,-123.259913282
+9thSt_W_HayesAve,10673,9th & Hayes [Shelter],44.582048134,-123.258785923
+9thSt_W_HemlockAve,10982,9th & Hemlock,44.595016398,-123.251591024
+9thSt_W_MaxineAve,10976,9th & Maxine,44.597477652,-123.250193208
+9thSt_W_PolkAve,10440,Avery Square,44.570603109,-123.265086974
+9thSt_W_ReimanAve,10455,9th & Reiman,44.573312363,-123.263619295
+9thSt_W_SequoiaAve,10995,9th & Sequoia [Shelter],44.591033254,-123.253839348
+9thSt_W_SpruceAve,11015,9th & Spruce [Shelter],44.58606948,-123.25659798
+9thSt_W_StarkerAve,10694,9th & Beca [Shelter],44.578525849,-123.260738749
+9thSt_W_VanBurenAve,10710,9th & Harrison,44.56772393,-123.266501942
+9thSt_W_WalnutBlvd,10809,9th & Walnut [Shelter],44.593701048,-123.252363386
+AdamsAve_N_5thSt,,Adams & 5th,44.56195786,-123.264327114
+AlbanyAmtrakStation,,Albany Amtrak Station [Shelter],44.630307425,-123.103127925
+ApplegateSt_N_20thSt,,Philomath High School,44.539009523,-123.356442526
+ApplegateSt_S_11thSt,,Philomath City Library,44.539031608,-123.371058452
+ApplegateSt_S_17thSt,,Applegate & 16th,44.538867224,-123.362379043
+ApplegateSt_S_20thSt,,Philomath High School,44.538819319,-123.356408698
+ArnoldWay_N_26thSt,12412,Monroe & 26th [Shelter],44.569316562,-123.280308125
+ArnoldWay_N_ShortAve,12408,Arnold Way & Short,44.570986955,-123.282359359
+ArnoldWay_S_ShortAve,12393,Arnold Way & Short,44.570937422,-123.282477883
+ArrowoodCir_N_29thSt,13283,Arrowood & 29th,44.5965289,-123.288457016
+AspenSt_W_ArrowoodCir,13277,Aspen & Arrowood,44.595558977,-123.293557471
+BethelSt_E_BethelPl,11996,Bethel & Bethel Place,44.546384735,-123.259195677
+BethelSt_E_BridgewayAve,11977,Bethel & Bridgeway,44.550505925,-123.25855029
+BethelSt_E_LillyAve,11983,Bethel & Lilly/Lilly Park [Shelter],44.548043508,-123.258582837
+BroadabinSt_E_2ndSt,,2nd / Broadalbin,44.636192,-123.107155
+BroadwaySt_W_14thAve,,Broadway & 14th,44.625603,-123.121964
+BroadwaySt_W_9thAve,,Broadway & 9th,44.628933,-123.122086
+BuchananAve_N_9thSt,12790,Buchanan & 9th/Buchanan Bike Path [Shelter],44.575229455,-123.260561906
+BuchananAve_S_9thSt,12788,Buchanan & 9th/Buchanan Bike Path,44.57520507,-123.261286583
+CircleBlvd_N_11thSt,11155,Circle & 11th,44.58880177,-123.264558222
+CircleBlvd_N_13thSt,11140,Circle & 13th,44.588770386,-123.267538887
+CircleBlvd_N_17thSt,11138,Circle & 17th,44.587509987,-123.27276309
+CircleBlvd_N_27thSt,11114,Circle & 27th,44.586497039,-123.281553776
+CircleBlvd_N_9thSt,11036,Circle & 9th [Shelter],44.588919555,-123.255225309
+CircleBlvd_N_BelvueSt,11058,Circle & Belvue,44.589038145,-123.248394466
+CircleBlvd_N_FourAcresSt,11043,DMV (Oregon Dept Moter Veh),44.588990615,-123.251598562
+CircleBlvd_N_JanssenSt,11027,Circle & Janssen,44.588805635,-123.258991704
+CircleBlvd_N_KingsBlvd,11129,Circle & Kings,44.58644366,-123.276337112
+CircleBlvd_S_11thSt,12648,Circle & 11th,44.588637425,-123.263909337
+CircleBlvd_S_17thSt,12669,Circle & 17th,44.587707086,-123.272046761
+CircleBlvd_S_9thSt,11164,Circle & 9th,44.588711175,-123.255810256
+CircleBlvd_S_BelvueSt,11070,Circle & Belvue [Shelter],44.588748347,-123.249935409
+CircleBlvd_S_GarryannaSt,12653,Circle & 14th,44.588549467,-123.26888154
+CircleBlvd_S_HighlandDr,11186,Circle & Highland,44.5886294,-123.262184104
+CircleBlvd_S_JackLondonSt,11062,DMV (Oregon Dept Moter Veh),44.588760614,-123.247470052
+CircleBlvd_S_JanssenSt,11172,Circle & Janssen [Shelter],44.588599548,-123.258477498
+CircleBlvd_S_KingsBlvd,11089,Circle & Kings,44.586261252,-123.275332902
+CircleBlvd_S_PendletonPl,11091,Circle & Pendleton/Jefferson School,44.586289244,-123.279585075
+ClaySt_W_14thAve,,Clay at Heritage Mall [Shelter],44.630341,-123.077301
+ColumbusSt_E_ColumbusPl,,Columbus / Columbus Pl,44.608185,-123.079445
+ConiferBlvd_E_GlacierWay,10878,Conifer & Glacier Way,44.59910649,-123.234524615
+ConiferBlvd_N_CanterburyCir,10383,Conifer & Canterbury [Shelter],44.600026477,-123.241455482
+ConiferBlvd_N_DorchesterWay,10884,Conifer & Dorchester/Cheldelin School [Shelter],44.600180275,-123.23869923
+ConiferBlvd_N_Hwy99W,10907,Conifer & Hwy 99 [Shelter],44.596945968,-123.24838421
+ConiferBlvd_N_ParkCir,10377,Conifer at Meadow Park [Shelter],44.5998707,-123.245213761
+ConiferBlvd_N_RRTracks,,Conifer at Railroad Tracks,44.599561538,-123.235066383
+ConiferBlvd_W_PowderhornDr,10897,Conifer & Powderhorn,44.598559729,-123.246046491
+ConserSt_E_ConroyPl,13732,Conser & Conroy,44.597242755,-123.234408047
+ConserSt_E_GlacierWay,13064,Conser & Glacier Way,44.596332414,-123.236782385
+ConserSt_E_KirstenPl,13072,Conser & Kirsten,44.594320222,-123.237451657
+ConserSt_E_SeavyAve,13093,Conser & Seavy,44.59181081,-123.242069457
+ConserSt_S_JasperSt,13086,Conser & Jasper,44.592999714,-123.240220392
+CorvallisClinicDriveway_E_SamaritanDr,10948,Corvallis Clinic Asbury Building,44.602256851,-123.255402373
+CorvallisClinicDriveway_W_SamaritanDr,10969,Corvallis Clinic  Asbury Building [Shelter],44.6023496,-123.255463666
+CountryClubDr_S_45thSt,11833,Country Club & 45th,44.546475364,-123.301684519
+CountryClubDr_S_MartinSt,11814,Country Club & Martin,44.548297792,-123.292179243
+CountryClubDr_S_MeadowFlowerDr,10128,Country Club & Meadowflower,44.545678231,-123.309723781
+CountryClubDr_S_ResearchWy,11822,Country Club & Research Way,44.548119854,-123.295389918
+CountryClubDr_S_StonybrookSt,11846,Country Club & Stonybrook [Shelter],44.545646113,-123.305410839
+CrystalLakeDr_E_BethelCt,11965,Crystal Lake & Bethel [Shelter],44.551836686,-123.258281817
+CV_Driveway_N_RaiderWay,,Cresent Valley High School/Park & Ride,44.615272754,-123.266368763
+DelRioAve_N_ColumbusSt,,DelRio & Columbus,44.602463,-123.079247
+DelRioAve_N_WaverlyDr,,DelRio & Waverly,44.60199,-123.075127
+DogwoodAve_N_WesternSt,,Dogwood & Western,44.639584,-123.052399
+ElksDr_N_SamaritanDr_A,13323,Elks & Samaritan,44.600965307,-123.250291679
+ElksDr_N_SamaritanDr_B,13347,Elks at Regent,44.600985472,-123.251937034
+ElksDr_N_SatinwoodSt,13352,Corvallis Clinic Aumann Building,44.601440631,-123.253944967
+ElksDr_S_SamaritanDr_A,13334,Elks at Regent,44.600882265,-123.252246806
+ElksDr_S_SamaritanDr_B,13310,Elks & Samaritan,44.600787742,-123.250156128
+ElksDr_S_SatinwoodSt,13375,Corvallis Clinic Aumann Building [Shelter],44.601291124,-123.254577566
+ElmSt_W_11thAve,,Elm & 11th [Shelter],44.628162,-123.11438
+ElmSt_W_19thAve,,Elm & 19th,44.622494,-123.11409
+ElmSt_W_24thAve,,Elm & 24th,44.619057,-123.113998
+ForestGreenAve_W_17thSt,13103,17th & Forest Green,44.590034312,-123.272750967
+FourAcresSt_S_CircleBlvd,,Four Acres & Circle,44.587180573,-123.251122536
+GarfieldAve_S_9thSt,13663,Garfield & 9th,44.583079054,-123.258952984
+GarfieldAve_S_HighlandDr,13671,Garfield & Highland,44.583012649,-123.262110167
+GearySt_W_GearyCir,,Geary & Geary Cir,44.62812,-123.083427
+GibsonHillRd_N_GibsonWay,,Gibson Hill & Gibson Way,44.657078,-123.118996
+GoldfishFarmRd_W_DogwoodAve,,Goldfish Farm,44.639713,-123.048347
+GoodnightAve_S_AldrinPl,13038,Goodnight & Deborah,44.536669665,-123.263061587
+GoodnightAve_S_GlennSt,13040,Goodnight & Glenn [Shelter],44.53665541,-123.264954862
+GoodnightAve_S_GoodparkAve,13029,Goodnight & Goodpark,44.536691235,-123.258745635
+GrandOaksDr_E_BanyonCir,,Grand Oaks & Banyon,44.558772583,-123.319243458
+GrandOaksDr_E_DelwoodAve,,Grand Oaks & Delwood,44.561373502,-123.318990549
+GrandOaksDr_W_ArborGroveDr,,Grand Oaks & Arbor Grove,44.557743212,-123.32411173
+GrandOaksDr_W_TimberRidgeDr,,Grand Oaks & Timber Ridge,44.560057159,-123.324773782
+GrantAve_S_23rdSt,,Grant & 23rd,44.578583,-123.278282
+GrantAve_S_28thSt,,Grant & 28th  (Co-op),44.578625,-123.282295
+GrantAve_S_31stSt,,Grant & 31st,44.578663,-123.285507
+GrantAve_S_EdgewoodDr,,Grant & Edgewood,44.578705,-123.290504
+HarrisonBlvd_N_29thSt,12386,Harrison & 29th,44.571805621,-123.28413231
+HarrisonBlvd_N_32ndSt,12505,Harrison & 32nd,44.571783435,-123.286858634
+HarrisonBlvd_N_34thSt,12496,Harrison & 35th,44.571772077,-123.28927443
+HarrisonBlvd_N_36thSt,,Harrison & 36th,44.57182027,-123.291054609
+HarrisonBlvd_N_3rdSt,,Harrison & 3rd,44.567463015,-123.259731469
+HarrisonBlvd_N_7thSt,,Harrison & 7th,44.568473541,-123.263854619
+HarrisonBlvd_N_WithamDr,,Harrison & Merrie,44.571884963,-123.294702599
+HarrisonBlvd_S_21stSt,13436,Harrison & 21st,44.571371892,-123.276101955
+HarrisonBlvd_S_23rdSt,,Harrison & 23rd,44.571671889,-123.278436205
+HarrisonBlvd_S_27thSt,14356,Harrison & 27th,44.571696966,-123.282258891
+HarrisonBlvd_S_31stSt,10233,Harrison & 31st,44.571691485,-123.285474564
+HarrisonBlvd_S_33rdSt,10222,Harrison & 33rd,44.571700187,-123.287545787
+HarrisonBlvd_S_35thSt,10214,Harrison & 35th,44.57168656,-123.289364444
+HewlettPackardParkingLot,10562,Hewlett Packard,44.584995459,-123.243657502
+HickoryAve_S_SpringHillDr,,North Albany/Hickory St Park & Ride [Shelter],44.643902,-123.108215
+HighlandDr_E_AnjniCir,,Highland & Anjni,44.595875404,-123.26246089
+HighlandDr_E_CircleBlvd,11350,Highland & Circle,44.589092029,-123.262420258
+HighlandDr_E_ClevelandAve,11206,Highland & Cleveland/Linus Pauling School,44.586101846,-123.262458418
+HighlandDr_E_GarfieldAve,11210,Highland & Garfield,44.583299928,-123.262436561
+HighlandDr_E_HayesAve,11223,Highland & Hayes,44.581777914,-123.262454564
+HighlandDr_E_MeadowRidgePl,,Highland & Meadow Ridge,44.600332951,-123.262566147
+HighlandDr_E_OakAve,11332,Highland & Oak,44.592745378,-123.262457019
+HighlandDr_E_SequoiaAve,11345,Highland & Sequoia,44.591245654,-123.262459085
+HighlandDr_E_SpruceAve,11193,Highland & Spruce/Osborne Aquatic Center [Shelter],44.587642432,-123.262417256
+HighlandDr_E_WalnultBlvd,,Highland & Walnut,44.593955717,-123.262445854
+HighlandDr_W_AngelicaDr,,Highland & Angelica,44.594983226,-123.262704819
+HighlandDr_W_CircleBlvd,11268,Highland & Circle,44.589487222,-123.262659417
+HighlandDr_W_ClevelandAve,11247,Highland & Cleveland,44.585580981,-123.262652064
+HighlandDr_W_HayesAve,,Highland & Hayes,44.581565472,-123.262643002
+HighlandDr_W_HighlandDellDr,,Highland & Highland Dell,44.60039811,-123.262875235
+HighlandDr_W_SpruceAve,11252,Highland & Spruce/Linus Pauling School & Osborne Aquatic Center [Shelter],44.587175082,-123.262689034
+HighlandDr_W_WalnutBlvd,11275,Highland & Walnut,44.593315765,-123.262643128
+HillSt_E_12thAve,,Hill / 14th at Boys & Girls Club [Shelter],44.629898,-123.091431
+HillSt_E_18thAve,,Hill & 18th,44.623749,-123.090324
+HillSt_E_24thAve,,Hill / 24 [Shelter],44.618385,-123.090141
+HillSt_E_28thAve,,Hill / 28th,44.614697,-123.090057
+Hwy20_B_SteeleAve,,Children's Farm Home/Davis Family Farm {LBL:Flag Stop},44.607784782,-123.217984103
+Hwy34_B_PeoriaRd,,Peoria Market/Wolcott {LBL:Flag Stop},44.563937164,-123.234863308
+Hwy34_N_RiversideDr,,Riverside (Westbound) {LBL:Flag Stop},44.564098,-123.197807
+JacksonSt_E_11thAve,,Jackson & 11th,44.630249,-123.09803
+JacksonSt_E_32ndAve,,Jackson / 32nd [Shelter],44.611313,-123.096161
+JamesSt_S_NewtonSt,,James & Newton,44.541918493,-123.342664311
+JeffersonAve_N_11thSt,13249,Jefferson & 11th/OSU,44.564686383,-123.27225329
+JeffersonAve_N_7thSt,13265,Jefferson & 7th,44.563459887,-123.265833722
+JeffersonAve_N_8thSt,13254,Jefferson & 8th,44.563931803,-123.267665251
+JeffersonAve_S_11thSt,13231,Jefferson & 11th/OSU [Shelter],44.56451071,-123.271374451
+JeffersonWay_N_LangtonPl,,OSU Book Store - MU [Shelter],44.564646284,-123.277844453
+KilldeerAve_S_AirportRd,,Killdeer at Costco,44.639004,-123.066414
+KingsBlvd_E_ArthurPl,14575,Kings & Arthur,44.584123029,-123.275899073
+KingsBlvd_E_BecaAve,14547,Kings & Beca,44.577784793,-123.275208412
+KingsBlvd_E_CircleBlvd,14581,Kings & Circle,44.585862579,-123.275863028
+KingsBlvd_E_ElmwoodDr,14421,Kings & Elmwood [Shelter],44.587696485,-123.275899903
+KingsBlvd_E_FillmoreAve,14534,Kings & Fillmore [Shelter],44.575153822,-123.275109066
+KingsBlvd_E_ForestGreenAve,14432,Kings & Forest Green/Timberhill Shopping Center [Shelter],44.590524678,-123.275870352
+KingsBlvd_E_HayesAve,14568,Kings & Garfield,44.58176062,-123.275882102
+KingsBlvd_E_JacksonAve,14510,Kings & Jackson,44.569569211,-123.27500507
+KingsBlvd_E_KingsPl,14552,Kings & Mulkey,44.579777783,-123.275844053
+KingsBlvd_E_MonroeAve,14599,Kings & Monroe [Shelter],44.568208808,-123.274927143
+KingsBlvd_E_TylerAve,14523,Kings & Tyler,44.572665638,-123.275111302
+KingsBlvd_W_CircleBlvd,14445,Kings & Circle,44.585594866,-123.276130373
+KingsBlvd_W_FillmoreAve,14478,Kings & Fillmore [Shelter],44.575706303,-123.275359195
+KingsBlvd_W_GarfieldAve,14450,Kings & Garfield,44.582728313,-123.27609107
+KingsBlvd_W_JacksonAve,14506,Kings & Jackson,44.569455527,-123.275156926
+KingsBlvd_W_MulkeyAve,14466,Kings & Mulkey,44.58025023,-123.276058493
+KingsBlvd_W_TaylorAve,14484,Kings & Taylor,44.574013602,-123.275275222
+KingsBlvd_W_TylerAve,14497,Kings & Tyler,44.572740138,-123.275245507
+KnoxButteRd_S_OpalSt,,Knox Butte & Opal,44.644245,-123.056931
+KnoxButteRd_S_TimberSt,,Knox Butte & Timber,44.644039,-123.053154
+LBCC,,LBCC (Linn Benton Com Col) [Shelter],44.586189,-123.113922
+MidvaleDr_W_BrooksideWay,12956,Midvale & Centerpointe,44.531355175,-123.25686797
+MidvaleDr_W_GoodnightAve,12987,Midvale & Goodnight,44.536465045,-123.256778003
+MidvaleDr_W_SchoonerAve_A,12973,Midvale & Wetland Park,44.534387743,-123.256726039
+MidvaleDr_W_SchoonerAve_B,12960,Midvale & Schooner [Shelter],44.533153763,-123.256703148
+MonroeAve_N_11thSt,12465,Monroe & 11th,44.566669185,-123.269639893
+MonroeAve_N_15th,12454,Monroe & 14th,44.567409446,-123.272702325
+MonroeAve_N_9thSt,12477,Monroe & 9th,44.566126626,-123.267597831
+MonroeAve_N_KingsBlvd,12449,Monroe & Kings [Shelter],44.56800599,-123.274900368
+MonroeAve_N_MemorialPl,12420,Monroe & 23rd,44.568607451,-123.277809456
+MonroeAve_S_10thSt,10280,Monroe & 10th,44.566233978,-123.268552182
+MonroeAve_S_14thSt,10279,Monroe & 14th,44.567089495,-123.271981179
+MonroeAve_S_23rdSt,10251,Monroe & 23rd,44.56834902,-123.277322168
+MonroeAve_S_26thSt,10246,Monroe & 26th,44.568857242,-123.279620187
+MonroeAve_S_5thSt,"14244 (8), 14228 (5), 14341 (3), 14341 (2), 14237 (6), 14244 (4), 14228 (7), 14237 (1)",Downtown Transit Center/City Hall [Shelter],44.564760529,-123.263449524
+MonroeAve_S_5thSt_Curb,,Downtown Transit Center (street) [Shelter],44.564938,-123.263374
+MonroeAve_S_7thSt,10308,Library/Central Park,44.565337789,-123.265026085
+MonroeAve_S_9thSt,10298,Monroe & 9th,44.565845108,-123.267052216
+MonroeAve_S_KingsBlvd,10267,Monroe & Kings,44.567786891,-123.274844407
+NewtonSt_N_26thSt,,26th & Newton,44.540901302,-123.346248252
+NewtonSt_S_26thSt,,26th & Newton,44.540727024,-123.34625023
+NewtonSt_W_NewtonPl,,James St & Newton,44.541826638,-123.343114362
+NorthAlbanyFireStation,,North Albany Fire Station,44.656273,-123.134995
+NorthAlbanyRd_E_JonesAve,,North Albany & Jones,44.646095,-123.114151
+NorthAlbanyRd_W_JonesAve,,North Albany & Jones,44.646114,-123.114502
+PacificBlvd_B_RollandDr,,Wilco {LBL:Flag Stop},44.559973415,-123.110061406
+PacificBlvd_E_19Ave,,Taco Bell/Pacific Blvd before Albany Station,44.62262,-123.110168
+PacificBlvd_E_29thAve,,29th {LBL:Flag Stop},44.61504,-123.113609
+PacificBlvd_E_32ndAve,,YMCA [Shelter]{LBL:Flag Stop},44.611298,-123.113533
+PacificBlvd_E_CollegeParkDr,,College Park {LBL:Flag Stop},44.598652,-123.113121
+PacificBlvd_E_EllingsonRd,,Pacific & Ellingson,44.589367,-123.109673
+PacificBlvd_E_WalnutSt,,Pacific & Walnut,44.618713,-123.112961
+PacificBlvd_N_ClevelandSt,,Goodwill {LBL:Flag Stop},44.634113,-123.084824
+PacificBlvd_S_WaverlyDr,,Pacific & Waverly,44.638035,-123.071587
+PacificBlvd_W_29thAve,,29th {LBL:Flag Stop},44.614346,-123.113953
+PacificBlvd_W_36thAve,,35th/Pacific {LBL:Flag Stop},44.607941,-123.1138
+PacificBlvd_W_53rdAve,,53rd {LBL:Flag Stop},44.595882,-123.113274
+PacificBlvd_W_LanierSt,,Pacific / Ellingson,44.589062,-123.110092
+PacificBlvd_W_PacificPl,,Pacific / 34th,44.610695,-123.113884
+ParkAve_S_GlennSt,13055,Park & Glenn,44.538544919,-123.265580218
+ParkAve_S_ThompsonSt,12034,Park & Thompson [Shelter],44.538601636,-123.260783829
+PhilomathBlvd_N_47thSt,13174,Philomath Blvd & 47th,44.553664406,-123.303304926
+PhilomathBlvd_N_TimianSt,13161,Philomath Blvd & Timian,44.55298778,-123.305511209
+PhilomathBlvd_S_53rdSt,,Philomath Blvd & 53rd,44.550958676,-123.31131653
+PhilomathBlvd_S_BlueberryDr,,Philomath Blvd at Sunset Center,44.551469642,-123.309680088
+PhilomathBlvd_S_ScottSt,13119,Philomath Blvd & Scott,44.554311808,-123.300889138
+PhilomathBlvd_S_TimianSt,13126,Philomath Blvd & Timian,44.552832395,-123.305242959
+PlymouthDr_N_53rdSt,,Plymouth & 53rd,44.538373135,-123.312141977
+PlymouthDr_S_53rdSt,,Plymouth & 53rd,44.538243539,-123.312108035
+PriceRd_W_BlueOxDr,,Price & Blue Ox,44.632168,-123.057251
+PriceRd_W_TimberSt,,Price & Timber,44.639149,-123.058205
+QueenAve_N_GearySt,,Queen & Geary,44.625252,-123.084412
+QueenAve_N_MainSt,,Queen & Main,44.625214,-123.088478
+QueenAve_N_MarionSt,,Queen / Marion,44.625248,-123.098328
+QueenAve_N_PowellSt,,Queen & Powell,44.625179,-123.092461
+QueenAve_S_TakenaSt,,Queen & Takena,44.623531,-123.117622
+RaiderWay_N_HighlandDr,,Cresent Valley High School,44.614916885,-123.264905191
+RivergreenAve_N_HathawayDr,12941,Rivergreen & Hathaway,44.531138367,-123.262506731
+RivergreenAve_N_MidvaleDr,12939,Rivergreen & Midvale [Shelter],44.530917695,-123.258832972
+RivergreenAve_N_VillaDr,12925,Rivergreen & Villa [Shelter],44.531127463,-123.265915332
+RollingGreenDr_N_ForestGreenAve,13296,Rolling Green & Forest Green,44.590805043,-123.272627642
+RollingGreenDr_W_WalnutBlvd,13306,Rolling Green - Timberhill [Shelter],44.592564731,-123.271590802
+RyanSt_E_AlexanderAve,12006,Ryan & Alexander [Shelter],44.545023984,-123.258514884
+RyanSt_E_DenmanAve,12023,Ryan & Denman,44.540785144,-123.258497119
+RyanSt_E_RichlandAve,12010,Ryan & Richland,44.542732095,-123.2585047
+SalemAve_S_ColumbusSt,,Salem / Columbus,44.638836,-123.079536
+SalemAve_S_MasonSt,,Salem & Mason,44.637825,-123.086327
+SalemAve_S_ShermanSt,,Salem / Sherman,44.637474,-123.091393
+SalemAve_S_WaverlyDr,,Salem & Waverly,44.639751,-123.073761
+SamaritanDr_E_ElksDr,10924,Samaritan Drive [Shelter],44.603292269,-123.24974598
+SamaritanDr_N_SatinwoodSt,10930,Good Samaritan Hospital [Shelter],44.603765069,-123.25316986
+SamaritanDr_S_SatinwoodSt,10953,Good Samaritan Hospital [Shelter],44.603254946,-123.253319683
+SamaritanDr_W_ElksDr,13323,Samaritan Health Center,44.603275941,-123.249978621
+SantiamHwy_N_BainSt,,Santiam Hwy & Bain,44.631405,-123.069832
+SantiamHwy_N_PriceRd,,Santiam Hwy & Price,44.629765,-123.057434
+SantiamHwy_S_ColumbusSt,,Santiam Hwy & Columbus,44.633072,-123.07914
+SatinwoodSt_E_MaxineAve,11711,Satinwood & Maxine,44.598028544,-123.257349818
+SatinwoodSt_E_MaxineCir,13399,Satinwood & Maxine North,44.601002454,-123.257329808
+SatinwoodSt_E_WalnutBlvd,11730,Satinwood & Walnut/Wilson Elementary School,44.594781164,-123.257320769
+SatinwoodSt_W_ElksDr,13381,Satinwood & Elks,44.601446832,-123.257511269
+SatinwoodSt_W_MaxineAve,11707,Satinwood & Maxine,44.597604691,-123.257552506
+SatinwoodSt_W_SundanceCir,11724,Satinwood & Sundance,44.595245954,-123.257519457
+SouthHPDriveway,,HP South Entrance,44.580608164,-123.243403836
+SouthwoodDr_N_MountUnionAve,,Southwood & Bellfountain,44.535086358,-123.334547371
+SouthwoodDr_S_BellfountainRd,,Southwood & Bellfountain,44.534873543,-123.334552436
+TechnologyLp_E_ResearchWy,13541,Tech Loop & Research Wy,44.550938039,-123.306131845
+TechnologyLp_W_ResearchWy,13135,Tech Loop & Research Wy,44.551066112,-123.306404101
+USHwy20_N_12thSt,,Main & 12th,44.540266637,-123.369657037
+USHwy20_N_14thSt,,Main & 14th,44.540198445,-123.366538876
+USHwy20_N_18thSt,,Main & 18th,44.540075548,-123.360118956
+USHwy20_N_9thSt,,Main & 9th,44.540361827,-123.374026244
+WalnutBlvd_E_CircleBlvd,,Walnut & Circle,44.5894123,-123.244202446
+WalnutBlvd_N_13thSt,10832,Walnut & Garryanna,44.593876522,-123.267812323
+WalnutBlvd_N_29thSt,,Walnut & 29th,44.593398899,-123.285619756
+WalnutBlvd_N_9thSt,10813,Walnut & 9th,44.594176708,-123.252693052
+WalnutBlvd_N_AspenSt_A,,"Walnut, East of Hoover Elementary School",44.593284911,-123.289710031
+WalnutBlvd_N_AspenSt_B,10641,Walnut & Aspen/Hoover Elementary School,44.593276867,-123.294985585
+WalnutBlvd_N_FairlawnSt,10821,Walnut & Satinwood,44.594001142,-123.258284174
+WalnutBlvd_N_HighlandDr,10866,Walnut & Highland,44.593956531,-123.263316525
+WalnutBlvd_N_KingsBlvd,,Walnut & Kings,44.592413386,-123.276629177
+WalnutBlvd_N_PrincessSt,10639,Walnut & Princess,44.593515943,-123.29934073
+WalnutBlvd_S_13thSt,10515,Walnut & 13th,44.593654548,-123.267991557
+WalnutBlvd_S_29thSt_A,10591,"Walnut, West of 29th",44.59316882,-123.28557818
+WalnutBlvd_S_29thSt_B,10543,"Walnut, East of 29th",44.593017797,-123.282695154
+WalnutBlvd_S_9thSt,10486,Walnut & 9th,44.593956866,-123.252391048
+WalnutBlvd_S_AspenSt_A,10618,Walnut & Aspen/Hoover Elementary School,44.593077475,-123.293229117
+WalnutBlvd_S_AspenSt_B,10602,"Walnut, East of Hoover Elementary School",44.593123394,-123.289277867
+WalnutBlvd_S_JackLondonSt,10472,Walnut & Jack London [Shelter],44.593015652,-123.246621171
+WalnutBlvd_S_KingsBlvd,10527,Walnut & Kings,44.592243394,-123.275483831
+WalnutBlvd_S_OakAve,10504,Walnut & Oak,44.593491984,-123.260643177
+WalnutBlvd_S_PrincessSt,10558,Walnut & Princess,44.593278272,-123.299166017
+WalnutBlvd_S_ProfessionalDr,10536,Walnut & Professional Dr,44.592488196,-123.278093192
+WalnutBlvd_S_RollingGreenDr,10589,Walnut & Rolling Green,44.593598589,-123.271229026
+WalnutBlvd_S_SatinwoodSt,10493,Walnut & Satinwood,44.593936556,-123.256481819
+WalnutBlvd_S_WalnutPl,10625,Walnut & Hummingbird,44.593092266,-123.295954556
+WalnutBlvd_S_WithamHillDr,10571,Walnut & Witham Hill/Glenridge,44.593797834,-123.301329399
+WalnutBlvd_W_ConserSt,10464,Walnut & Conser,44.591312111,-123.242864367
+WashingtonSt_W_3rdAve,,Washington & 3rd,44.635452,-123.109856
+WashingtonSt_W_WaterAve,,Washington & Water,44.637207,-123.11026
+WaverlyDr_W_14thAve,,Waverly & 14th,44.628353,-123.073341
+WaverlyDr_W_21stPl,,Waverly & 21st,44.62141,-123.073021
+WaverlyDr_W_25thAve,,Waverly & 25th,44.617386,-123.072891
+WaverlyDr_W_GrandPrairieRd,,Waverly & Grand Prairie,44.614109,-123.073174
+WaverlyDr_W_MoragaAve,,Waverly & Moraga,44.603851,-123.07354
+WaverlyDr_W_PacificBlvd,,Waverly & Pacific,44.637169,-123.073524
+WaverlyDr_W_QueenAve,,Waverly & Queen,44.624748,-123.073097
+WaverlyDr_W_SantiamHwy,,Waverly at Fred Meyer [Shelter],44.630787,-123.07357
+WesternBlvd_N_13thSt,11920,Western & 13th,44.560127444,-123.271884516
+WesternBlvd_N_16thSt,11912,Western & 17th,44.559786295,-123.275381201
+WesternBlvd_N_26thSt,11908,Western & 26th,44.55864572,-123.278409864
+WesternBlvd_N_35thSt,11867,Western & 35th,44.557005438,-123.290186324
+WesternBlvd_N_4thSt,11949,Western & 4th,44.559821298,-123.264714129
+WesternBlvd_N_7thSt,11931,Western & 7th [Shelter],44.560468606,-123.268359469
+WesternBlvd_N_GroveSt_A,11898,Western & Grove/Reser Stadium [Shelter],44.557163546,-123.281588612
+WesternBlvd_N_GroveSt_B,11880,Western & Grove,44.556917345,-123.283442798
+WesternBlvd_N_IvyPl,11851,Western & Ivy,44.556627566,-123.293677107
+WesternBlvd_N_PoplarPl,11879,Western & Poplar,44.556947298,-123.285940286
+WesternBlvd_S_35thSt,11769,Western & 35th,44.556784582,-123.289358078
+WesternBlvd_S_GroveSt,11748,Western & Grove [Shelter],44.556792829,-123.2827167
+WesternBlvd_S_IvyPl,11776,Western & Ivy,44.556498285,-123.293673031
+WesternBlvd_S_PoplarPl,11753,Western & Poplar,44.556790864,-123.286716752
+WesternBlvd_S_StammPl,,Western & Stamm,44.556772097,-123.288172393
+WestHillsRd_N_55thSt,,West Hills & 55th,44.55642067,-123.316278057
+WestHillsRd_N_GeroldSt,,West Hills & Gerold,44.556366319,-123.308095453
+WestHillsRd_N_LookoutDr,,West Hills & Lookout,44.557010866,-123.296305051
+WestHillsRd_N_StoppPl,,West Hills & Stopp,44.556402808,-123.302394597
+WestHillsRd_N_TimianSt,,West Hills & Timian,44.556384444,-123.305522737
+WestHillsRd_S_53rdSt,,West Hills & 53rd,44.556184935,-123.311747504
+WestHillsRd_S_GeroldSt,,West Hills & Gerold,44.556273158,-123.307933206
+WestHillsRd_S_LookoutDr,,West Hills & Lookout,44.556801414,-123.296248755
+WestHillsRd_S_TimianSt,,West Hills & Timian,44.556263259,-123.305627486
+WestHillsRd_S_WestHillsPl,,West Hills & West Hills Pl,44.556394373,-123.301459902
+WithamHillDr_E_CircleBlvd,14631,Witham Hill & Circle [Shelter],44.581666438,-123.295509825
+WithamHillDr_E_ElmwoodDr,14665,Witham Hill & Elmwood,44.589094757,-123.302087617
+WithamHillDr_E_UniversityPl,14649,Witham Hill at Witham Oaks,44.58394816,-123.298056056
+WithamHillDr_E_WestviewPl,14654,Witham Hill & Douglas,44.585977047,-123.30006658
+WithamHillDr_W_DouglasAve,14683,Witham Hill & Douglas,44.585462798,-123.299788706
+WithamHillDr_W_ElmwoodDr,14677,Witham Hill & Elmwood,44.588697809,-123.302339152
+WithamHillDr_W_FernwoodCir,14715,Witham Hill & Fernwood,44.578991868,-123.291957705
+WithamHillDr_W_PineconePl,14696,Witham Hill Oaks [Shelter],44.583444277,-123.297832034
+WithamHillDr_W_WalnutBlvd,14394,Witham Hill & Walnut,44.593330568,-123.30226823
+WithamHillDr_W_WoodlandDr,14704,Witham Hill & Woodland [Shelter],44.581878592,-123.296103853
