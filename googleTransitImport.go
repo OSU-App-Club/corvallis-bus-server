@@ -352,7 +352,7 @@ func processStopIDToStopNum(r *csv.Reader) map[string]int64 {
 	records, _ := r.ReadAll()
 
 	// stop_id[0], stop_number[1]
-	for _, record := range records {
+	for _, record := range records[1:] {
 		if record[1] != "" {
 			num, _ := strconv.Atoi(record[1])
 			stopIDToNumber[record[0]] = int64(num)
