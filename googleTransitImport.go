@@ -370,7 +370,8 @@ func createArrival(c appengine.Context, stop *SchedInfo, isScheduled bool, route
 
 	stopNum, ok := stopIDToNumber[stop.name]
 	if !ok {
-		return nil // Stops are not guarenteeded to be in both
+		//c.Errorf("Unknown stop: %s", stop.name)
+		return nil // Stops are not guarenteeded to be in both datasources
 	}
 
 	stopKey := datastore.NewKey(c, "Stop", "", stopNum, nil)

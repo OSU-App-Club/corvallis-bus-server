@@ -9,7 +9,7 @@ stop_id,stop_code,stop_name,stop_lat,stop_lon
 11thSt_W_PierceWay,13628,11th & Pierce/Corvallis High School [Shelter],44.574713381,-123.265449749
 11thSt_W_TylerAve,,11th & Tyler [ Not Used ],44.570225912,-123.267620319
 14thAve_N_DavidsonSt,,14th at Heritage Mall,44.628868,-123.079552
-14thSt_E_JeffersonAve,,14th & Jefferson/OSU [Shelter],44.565029211,-123.273597394
+14thSt_E_JeffersonAve,13208,14th & Jefferson/OSU [Shelter],44.565029211,-123.273597394
 15thSt_E_JeffersonWay,13212,15th & Jefferson/OSU [Shelter],44.563954907,-123.274047463
 15thSt_E_WesternBlvd,13188,15th & Western,44.5603757,-123.274013187
 15thSt_W_JeffersonWay,13220,15th & Jefferson/OSU [Shelter],44.564159807,-123.27420318
@@ -50,7 +50,7 @@ stop_id,stop_code,stop_name,stop_lat,stop_lon
 2ndSt_W_RenniePl_A,14758,2nd & Rennie,44.573922134,-123.25367056
 2ndSt_W_RenniePl_B,12726,2nd & South of Rennie,44.572661731,-123.254864049
 2ndSt_W_Tyler,12742,2nd & Polk,44.56851667,-123.257707126
-2ndSt_W_VanBurenAve,,2nd & Van Buren,44.565864323,-123.259050161
+2ndSt_W_VanBurenAve,,2nd & Van Buren [Not Used],44.565864323,-123.259050161
 2ndSt_W_WashingtonAve,14409,2nd & Washington,44.559715536,-123.262200345
 30thSt_E_ApplegateSt,,30th & Applegate,44.539377607,-123.34037467
 30thSt_E_SouthwoodDr,,30th & Southwood,44.535597733,-123.34056402
@@ -139,7 +139,7 @@ stop_id,stop_code,stop_name,stop_lat,stop_lon
 9thSt_S_MainSt,,9th & Main,44.632504,-123.090736
 9thSt_W_BuchananAve,10706,9th & Buchanan,44.575004095,-123.262686968
 9thSt_W_CircleBlvd,11004,9th & Circle [Shelter],44.588135014,-123.255402285
-9thSt_W_ConiferBlvd,,9th & Conifer,44.59655135,-123.250731734
+9thSt_W_ConiferBlvd,,9th & Conifer [Not Used],44.59655135,-123.250731734
 9thSt_W_CornellAve,10354,9th & Cornell [Shelter],44.577100518,-123.26153168
 9thSt_W_GarfieldAve,10673,9th & Garfield,44.584553667,-123.257447317
 9thSt_W_GrantAve,10349,9th & Grant,44.580085223,-123.259913282
@@ -153,7 +153,7 @@ stop_id,stop_code,stop_name,stop_lat,stop_lon
 9thSt_W_StarkerAve,10694,9th & Beca [Shelter],44.578525849,-123.260738749
 9thSt_W_VanBurenAve,10710,9th & Harrison,44.56772393,-123.266501942
 9thSt_W_WalnutBlvd,10809,9th & Walnut [Shelter],44.593701048,-123.252363386
-AdamsAve_N_5thSt,,Adams & 5th,44.56195786,-123.264327114
+AdamsAve_N_5thSt,,Adams & 5th [Not Used],44.56195786,-123.264327114
 AlbanyAmtrakStation,,Albany Amtrak Station [Shelter],44.630307425,-123.103127925
 ApplegateSt_N_20thSt,,Philomath High School,44.539009523,-123.356442526
 ApplegateSt_S_11thSt,,Philomath City Library,44.539031608,-123.371058452
@@ -198,7 +198,7 @@ ConiferBlvd_N_CanterburyCir,10383,Conifer & Canterbury [Shelter],44.600026477,-1
 ConiferBlvd_N_DorchesterWay,10884,Conifer & Dorchester/Cheldelin School [Shelter],44.600180275,-123.23869923
 ConiferBlvd_N_Hwy99W,10907,Conifer & Hwy 99 [Shelter],44.596945968,-123.24838421
 ConiferBlvd_N_ParkCir,10377,Conifer at Meadow Park [Shelter],44.5998707,-123.245213761
-ConiferBlvd_N_RRTracks,,Conifer at Railroad Tracks,44.599561538,-123.235066383
+ConiferBlvd_N_RRTracks,,Conifer at Railroad Tracks [Not Used],44.599561538,-123.235066383
 ConiferBlvd_W_PowderhornDr,10897,Conifer & Powderhorn,44.598559729,-123.246046491
 ConserSt_E_ConroyPl,13732,Conser & Conroy,44.597242755,-123.234408047
 ConserSt_E_GlacierWay,13064,Conser & Glacier Way,44.596332414,-123.236782385
@@ -326,7 +326,7 @@ MonroeAve_S_10thSt,10280,Monroe & 10th,44.566233978,-123.268552182
 MonroeAve_S_14thSt,10279,Monroe & 14th,44.567089495,-123.271981179
 MonroeAve_S_23rdSt,10251,Monroe & 23rd,44.56834902,-123.277322168
 MonroeAve_S_26thSt,10246,Monroe & 26th,44.568857242,-123.279620187
-MonroeAve_S_5thSt,"14244 (8), 14228 (5), 14341 (3), 14341 (2), 14237 (6), 14244 (4), 14228 (7), 14237 (1), 10312 (BBSW), 14271 (C1), 14271 (C2), 14271 (C3), 10312 (CVA",COMBINATION OF ALL ROUTES,44.564760529,-123.263449524
+MonroeAve_S_5thSt,"14244 (8), 14228 (5), 14341 (3), 14341 (2), 14237 (6), 14244 (4), 14228 (7), 14237 (1), 10312 (BBSW), 14271 (C1), 14271 (C2), 14271 (C3), 10312 (CVA), 10312 (BBN)",COMBINATION OF ALL ROUTES ( Need to add seperate entries below),44.564760529,-123.263449524
 1_MonroeAve_S_5thSt,14237,Downtown Transit Center/City Hall [Shelter],44.564760529,-123.263449524
 2_MonroeAve_S_5thSt,14341,Downtown Transit Center/City Hall [Shelter],,
 3_MonroeAve_S_5thSt,14341,Downtown Transit Center/City Hall [Shelter],,
@@ -336,6 +336,8 @@ MonroeAve_S_5thSt,"14244 (8), 14228 (5), 14341 (3), 14341 (2), 14237 (6), 14244 
 7_MonroeAve_S_5thSt,14228,Downtown Transit Center/City Hall [Shelter],,
 8_MonroeAve_S_5thSt,14244,Downtown Transit Center/City Hall [Shelter],,
 BBSW_MonroeAve_S_5thSt,10312,Downtown Transit Center/City Hall [Shelter],,
+BBN_MonroeAve_S_5thSt,10312,Downtown Transit Center/City Hall [Shelter],,
+BBSE_MonroeAve_S_5thSt,10312,Downtown Transit Center/City Hall [Shelter],,
 C1_MonroeAve_S_5thSt,14271,Downtown Transit Center/City Hall [Shelter],,
 C2_MonroeAve_S_5thSt,14271,Downtown Transit Center/City Hall [Shelter],,
 C3_MonroeAve_S_5thSt,14271,Downtown Transit Center/City Hall [Shelter],,
@@ -416,7 +418,7 @@ USHwy20_N_12thSt,,Main & 12th,44.540266637,-123.369657037
 USHwy20_N_14thSt,,Main & 14th,44.540198445,-123.366538876
 USHwy20_N_18thSt,,Main & 18th,44.540075548,-123.360118956
 USHwy20_N_9thSt,,Main & 9th,44.540361827,-123.374026244
-WalnutBlvd_E_CircleBlvd,,Walnut & Circle,44.5894123,-123.244202446
+WalnutBlvd_E_CircleBlvd,,Walnut & Circle [Not Used],44.5894123,-123.244202446
 WalnutBlvd_N_13thSt,10832,Walnut & Garryanna,44.593876522,-123.267812323
 WalnutBlvd_N_29thSt,10660,Walnut & 29th,44.593398899,-123.285619756
 WalnutBlvd_N_9thSt,10813,Walnut & 9th,44.594176708,-123.252693052

@@ -53,8 +53,6 @@ type Stop struct {
 
 	Lat  float64
 	Long float64
-
-	//Arrivals []Arrival `json:,omitempty` // Used only on ETA call
 }
 
 type Arrival struct {
@@ -68,8 +66,6 @@ type Arrival struct {
 	//Expected  time.Duration // Calculated from ETA when within 30 minutes of arrival
 
 	IsScheduled bool // true for values with known schedule times -- others are estimates
-
-	//Destination *datastore.Key // Link to destination stop -- needed?
 
 	// What days of the week this arrival is valid on
 	Monday    bool
