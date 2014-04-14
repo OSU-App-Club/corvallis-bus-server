@@ -21,6 +21,18 @@ func init() {
 	http.HandleFunc("/cron/init", CreateDatabase)
 }
 
+// Endpoint to allow access to arrival information
+// Accessed through specified stop IDs [limited to 10ish]
+func Arrivals(w http.ResponseWriter, r *http.Request) {
+	
+}
+
+// Endpoint to allow access to stop information
+// Accessed through specified stop IDs or by a radius from a given location
+func Stops(w http.ResponseWriter, r *http.Request) {
+
+}
+
 func routes_list(w http.ResponseWriter, r *http.Request) {
 	context := appengine.NewContext(r)
 
