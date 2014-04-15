@@ -10,7 +10,9 @@ import (
 	"appengine/datastore"
 	"appengine/memcache"
 	"sort"
+	"strconv"
 	"strings"
+	"time"
 )
 
 const baseURL = "http://www.corvallistransit.com/"
@@ -26,10 +28,155 @@ func init() {
 	http.HandleFunc("/cron/init", CreateDatabase)
 }
 
-// Endpoint to allow access to arrival information
-// Accessed through specified stop IDs [limited to 10ish]
-func Arrivals(w http.ResponseWriter, r *http.Request) {
+/*
+	/arrivals (endpoint to access arrival information)
 
+	Default: nothing returned
+	Paramaters:
+		stops:comma delimited list of stop numbers (required); Default: ""
+		date: date in RFC822Z format; Default: "currentDate"
+
+	Response:
+		stops: map stopNumber to array of arrival times in RFC822Z
+
+
+*/
+func Arrivals(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+
+	// Make sure this is a GET request
+	if r.Method != "GET" {
+		http.Error(w, "Method not allowed", 405)
+		return
+	}
+
+	sepStops := strings.Split(r.FormValue("stops"), ",")
+	if len(sepStops) == 0 || sepStops[0] == "" {
+		http.Error(w, "Missing required paramater: stops", 400)
+		return
+	}
+
+	// Use date input if avaliable
+	var filterTime time.Time
+	loc, _ := time.LoadLocation("US/Pacific")
+	currentTime := time.Now().In(loc) // Must account for time zone
+	paramDate := r.FormValue("date")
+	if len(paramDate) != 0 {
+		//Parse Date
+		inputTime, timeErr := time.Parse(time.RFC822Z, paramDate)
+		if timeErr != nil {
+			http.Error(w, "Paramater Error[date]: "+timeErr.Error(), 400)
+			return
+		}
+
+		filterTime = inputTime // Using time from parameter
+	} else {
+		filterTime = currentTime
+	}
+
+	// Calculate duration since midnight
+	_, offset := filterTime.Zone()
+	offsetDur := (time.Duration(offset) * time.Second)
+	durationSinceMidnight := filterTime.Sub(filterTime.Truncate(24*time.Hour)) + offsetDur
+
+	// Used to indicated CTS call finished
+	finished := make(chan error, 1)
+	stopIDToExpectedTime := make(map[int64]([]time.Duration))
+
+	// Only make CTS request if asking for within 30 min in the future -- CTS restriction
+	if diff := filterTime.Sub(currentTime); diff >= 0 && diff < 30*time.Minute {
+		// Request CTS realtime information concurrently
+
+		go func(c appengine.Context, stopNumStrings []string, m map[int64]([]time.Duration), finChan chan<- error) {
+			client := cts.New(c, baseURL)
+
+			for _, stopNumString := range stopNumStrings {
+				stopNum, _ := strconv.ParseInt(stopNumString, 10, 64)
+
+				plat := &cts.Platform{Number: stopNum}
+
+				// Make CTS call
+				client.ETA(plat)
+
+			}
+
+			finished <- nil
+
+		}(c, sepStops, stopIDToExpectedTime, finished)
+	} else {
+		finished <- nil
+		close(finished)
+	}
+
+	// Load all arrival information from datastore for given
+	arrivals := make(map[int64]([]*Arrival))
+	for _, stopNumString := range sepStops {
+		stopNum, _ := strconv.ParseInt(stopNumString, 10, 64)
+
+		// Query for arrival
+		parent := datastore.NewKey(c, "Stop", "", stopNum, nil)
+		q := datastore.NewQuery("Arrival").Ancestor(parent)
+		q = q.Filter("Scheduled >=", durationSinceMidnight)
+		q = q.Filter(filterTime.Weekday().String()+" =", true)
+		q = q.Order("Scheduled")
+
+		var dest []*Arrival
+		_, getError := q.GetAll(c, &dest)
+		if getError != nil {
+			http.Error(w, "Arrival Error: "+getError.Error(), 500)
+			continue //Try next loop -- bad stopNum
+		}
+
+		arrivals[stopNum] = dest
+	}
+
+	// Wait until cts call finishes
+	<-finished
+
+	// Create maps with given information
+	output := make(map[string][](map[string]string))
+	for stopNum, vals := range arrivals {
+		etas := stopIDToExpectedTime[stopNum]
+
+		result := make([](map[string]string), len(vals))
+
+		// Loop over arrival array
+		for i, val := range vals {
+			// Use this arrival to determine information
+			scheduled := filterTime.UTC().Truncate(24 * time.Hour).Add(val.Scheduled - offsetDur).In(loc)
+			expected := scheduled
+
+			if i < len(etas) {
+				// Add eta offset
+				expected = expected.Add(etas[i])
+			}
+
+			// Get route
+			var route Route
+			datastore.Get(c, val.Route, &route)
+
+			m := map[string]string{
+				"Route":     route.Name,
+				"Scheduled": scheduled.Truncate(time.Minute).Format(time.RFC822Z),
+				"Expected":  expected.Truncate(time.Minute).Format(time.RFC822Z),
+			}
+
+			result[i] = m
+		}
+
+		output[strconv.FormatInt(stopNum, 10)] = result
+	}
+
+	// Output JSON
+	data, errJSON := json.Marshal(output)
+	if errJSON != nil {
+		http.Error(w, errJSON.Error(), 500)
+		return
+	}
+
+	// Output JSON
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(w, string(data))
 }
 
 /*

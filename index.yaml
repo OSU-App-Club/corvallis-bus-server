@@ -10,6 +10,48 @@ indexes:
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
 
+- kind: Arrival
+  ancestor: yes
+  properties:
+  - name: Friday
+  - name: Scheduled
+
+- kind: Arrival
+  ancestor: yes
+  properties:
+  - name: Monday
+  - name: Scheduled
+
+- kind: Arrival
+  ancestor: yes
+  properties:
+  - name: Saturday
+  - name: Scheduled
+
+- kind: Arrival
+  ancestor: yes
+  properties:
+  - name: Sunday
+  - name: Scheduled
+
+- kind: Arrival
+  ancestor: yes
+  properties:
+  - name: Thursday
+  - name: Scheduled
+
+- kind: Arrival
+  ancestor: yes
+  properties:
+  - name: Tuesday
+  - name: Scheduled
+
+- kind: Arrival
+  ancestor: yes
+  properties:
+  - name: Wednesday
+  - name: Scheduled
+
 - kind: Route
   properties:
   - name: Name

@@ -1,4 +1,4 @@
 cron:
 #- description: Initial setup of datastore (Deletes and reinits)
 #  url: /cron/init
-#  schedule: every 10 minutes
+#  schedule: every 4 minutes

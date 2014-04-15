@@ -121,7 +121,7 @@ func updateWithGoogleTransit(c appengine.Context, tagToNumber map[int64]int64, r
 					stop := stops[midI]
 
 					// Modify time
-					stop.arrive = stop.arrive + (changeDir * time.Duration(midI+1))
+					stop.arrive = stops[i].arrive + time.Duration(midI-i)*changeDir
 					createArrival(c, stop, true, routeKey, route.Name, stopIDToNumber, calendarMap[tripIDToServiceID[trip_id]].days)
 				}
 
@@ -304,7 +304,6 @@ func processStopTimes(r *csv.Reader) map[string]([]*SchedInfo) {
 
 		identifer, _ := strconv.Atoi(record[4])
 		arrivalTime := timeOfDayStringToDuration(record[1])
-		//c.Debugf("Time Err: %s", record[1], arrivalTime, timeErr)
 
 		newS := &SchedInfo{
 			arrive: arrivalTime,
@@ -332,19 +331,18 @@ func timeOfDayStringToDuration(t string) time.Duration {
 	}
 
 	components := strings.SplitN(t, ":", 3)
-	hours, err := strconv.Atoi(components[0])
-	if err != nil {
-		hours, err = strconv.Atoi(string(components[0][1]))
-		if err != nil {
-			return 0
-		}
-	}
-	minutes, err := strconv.Atoi(components[1])
-	if err != nil {
+	hours, errHour := strconv.Atoi(components[0])
+	if errHour != nil {
 		return 0
 	}
-	seconds, err := strconv.Atoi(components[2])
-	if err != nil {
+
+	minutes, errMin := strconv.Atoi(components[1])
+	if errMin != nil {
+		return 0
+	}
+
+	seconds, errSeconds := strconv.Atoi(components[2])
+	if errSeconds != nil {
 		return 0
 	}
 

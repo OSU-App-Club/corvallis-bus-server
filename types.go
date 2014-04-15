@@ -63,19 +63,19 @@ type Arrival struct {
 
 	Route *datastore.Key
 
-	Scheduled time.Duration
+	Scheduled time.Duration // Stored as offset from midnight in US/Pacific
 	//Expected  time.Duration // Calculated from ETA when within 30 minutes of arrival
 
 	IsScheduled bool // true for values with known schedule times -- others are estimates
 
 	// What days of the week this arrival is valid on
-	Monday    bool
-	Tuesday   bool
-	Wednesday bool
-	Thursday  bool
-	Friday    bool
-	Saturday  bool
-	Sunday    bool
+	Monday    bool `json:"-"`
+	Tuesday   bool `json:"-"`
+	Wednesday bool `json:"-"`
+	Thursday  bool `json:"-"`
+	Friday    bool `json:"-"`
+	Saturday  bool `json:"-"`
+	Sunday    bool `json:"-"`
 }
 
 // https://developers.google.com/transit/gtfs/reference?csw=1#calendar_dates_fields
