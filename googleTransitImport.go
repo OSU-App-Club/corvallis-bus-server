@@ -6,7 +6,8 @@ import (
 	"archive/zip"
 	"bytes"
 	"encoding/csv"
-	"github.com/jlaffaye/ftp"
+	//"github.com/jlaffaye/ftp"
+	"appengine/urlfetch"
 	"io"
 	"io/ioutil"
 	"os"
@@ -66,7 +67,7 @@ func updateWithGoogleTransit(c appengine.Context, tagToNumber map[int64]int64, r
 	scheduleRouteMap := processStopTimes(r)
 
 	// Create map between stop_id -> platform number
-	transFile, _ := os.Open("GT_STOP->CTS_STOP_NUMBER.csv")
+	transFile, _ := os.Open("idToNumber.csv")
 	r = csv.NewReader(transFile)
 	stopIDToNumber := processStopIDToStopNum(r)
 
@@ -145,28 +146,33 @@ func updateWithGoogleTransit(c appengine.Context, tagToNumber map[int64]int64, r
 
 func downloadInformation(c appengine.Context) (*zip.Reader, error) {
 
-	// Connect to ftp
-	ftpCon, connErr := ftp.Connect("ftp.ci.corvallis.or.us:21") // Port 21 in default for FTP
-	if connErr != nil {
-		c.Errorf("Zip Read Error (FTP Connect): ", connErr)
-		return nil, connErr
-	}
+	/*
+		// Connect to ftp
+		ftpCon, connErr := ftp.Connect("ftp.ci.corvallis.or.us:21") // Port 21 in default for FTP
+		if connErr != nil {
+			c.Errorf("Zip Read Error (FTP Connect): ", connErr)
+			return nil, connErr
+		}
 
-	// Login (Need to do but doesn't matter values)
-	errLogin := ftpCon.Login("anonymous", "anonymous")
-	if errLogin != nil {
-		c.Errorf("Zip Login Error (FTP Login): ", errLogin)
-		return nil, errLogin
-	}
+		// Login (Need to do but doesn't matter values)
+		errLogin := ftpCon.Login("anonymous", "anonymous")
+		if errLogin != nil {
+			c.Errorf("Zip Login Error (FTP Login): ", errLogin)
+			return nil, errLogin
+		}
 
-	file, err := ftpCon.Retr("/pw/Transportation/GoogleTransitFeed/Google_Transit.zip")
-	if err != nil {
-		c.Errorf("Zip Read Error (FTP): ", err)
-		return nil, err
-	}
+		file, err := ftpCon.Retr("/pw/Transportation/GoogleTransitFeed/Google_Transit.zip")
+		if err != nil {
+			c.Errorf("Zip Read Error (FTP): ", err)
+			return nil, err
+		}
+	*/
 
-	bs, errRead := ioutil.ReadAll(file)
-	file.Close()
+	client := urlfetch.Client(c)
+	resp, _ := client.Get("https://dl.dropboxusercontent.com/u/3107589/Google_Transit.zip")
+
+	bs, errRead := ioutil.ReadAll(resp.Body)
+	//file.Close()
 	if errRead != nil {
 		c.Errorf("Zip Read Error: ", errRead)
 		return nil, errRead
