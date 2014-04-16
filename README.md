@@ -24,6 +24,8 @@ This API service is an HTTP GET based set of web services
 
   * Response:
     1. stops: map stopNumber to array of arrival times in RFC822Z
+      * Schedule: time bus is scheduled to arrive
+      * Expected: time bus will arrive based on real-time data (often equal to scheduled) 
 
     * Example
 
@@ -81,4 +83,43 @@ This API service is an HTTP GET based set of web services
         }
       ]
     }
+  ```
+
+### /stops
+
+  * Default:  returns all stops
+  * Params:
+    1. ids: comma delimited list of stop ids (optional); Default: ""
+    2. lat: latitude for search; Default: ""
+    3. lng: longitude for search; Default: ""
+    4. radius: radius in meters to make search; Default: 500
+    5. limit: limit the amount of stops returned; Default: none
+
+  * Response:
+    * stops: array of stops objects
+        *  Sort order different based on paramaters
+          1. location: sorted by distance
+          2. ids: sorted by ids
+
+
+  * Example
+
+  URL: http://www.corvallis-bus.appspot.com/stops?lat=44.57181000&lng=-123.2910000&radius=200&limit=1
+
+
+  ```json
+      {
+        "stops":[
+          {
+            "Name":"NW Harrison Blvd \u0026 NW 36th St",
+            "Road":"NW Harrison Blvd",
+            "Bearing":181.3342,
+            "AdherancePoint":false,
+            "Lat":44.57181054,
+            "Long":-123.2914071,
+            "ID":12483,
+            "Distance":32.24711617308209
+          }
+        ]
+      }
   ```

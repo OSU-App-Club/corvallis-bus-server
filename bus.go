@@ -303,9 +303,9 @@ func Routes(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-	/routes (endpoint to access route information)
+	/stops (endpoint to access stop information)
 
-	Default: returns all routes without detailed stops
+	Default: returns all stops
 	Paramaters:
 		ids: comma delimited list of stop ids (optional); Default: ""
 		lat: latitude for search; Default: ""
