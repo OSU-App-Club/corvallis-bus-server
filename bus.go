@@ -58,7 +58,7 @@ func Arrivals(w http.ResponseWriter, r *http.Request) {
 
 	// Use date input if avaliable
 	var filterTime time.Time
-	loc, _ := time.LoadLocation("US/Pacific")
+	loc, _ := time.LoadLocation("America/Los_Angeles")
 	currentTime := time.Now().In(loc) // Must account for time zone
 	paramDate := r.FormValue("date")
 	if len(paramDate) != 0 {
@@ -69,15 +69,14 @@ func Arrivals(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		filterTime = inputTime // Using time from parameter
+		filterTime = inputTime.In(loc) // Using time from parameter
 	} else {
 		filterTime = currentTime
 	}
 
 	// Calculate duration since midnight
-	_, offset := filterTime.Zone()
-	offsetDur := (time.Duration(offset) * time.Second)
-	durationSinceMidnight := filterTime.Sub(filterTime.Truncate(24*time.Hour)) + offsetDur
+	hour, min, sec := filterTime.Clock()
+	durationSinceMidnight := time.Duration(hour)*time.Hour + time.Duration(min)*time.Minute + time.Duration(sec)*time.Second
 
 	// Used to indicated CTS call finished
 	finished := make(chan error, 1)
@@ -143,13 +142,18 @@ func Arrivals(w http.ResponseWriter, r *http.Request) {
 		// Loop over arrival array
 		for i, val := range vals {
 			// Use this arrival to determine information
-			scheduled := filterTime.UTC().Truncate(24 * time.Hour).Add(val.Scheduled - offsetDur).In(loc)
+			scheduled := val.Scheduled
 			expected := scheduled
 
 			if i < len(etas) {
 				// Add eta offset
-				expected = expected.Add(etas[i])
+				expected = expected + etas[i]
 			}
+
+			//Convert to times
+			midnight := time.Date(filterTime.Year(), filterTime.Month(), filterTime.Day(), 0, 0, 0, 0, loc)
+			scheduledTime := midnight.Add(scheduled)
+			expectedTime := midnight.Add(expected)
 
 			// Get route
 			var route Route
@@ -157,8 +161,8 @@ func Arrivals(w http.ResponseWriter, r *http.Request) {
 
 			m := map[string]string{
 				"Route":     route.Name,
-				"Scheduled": scheduled.Truncate(time.Minute).Format(time.RFC822Z),
-				"Expected":  expected.Truncate(time.Minute).Format(time.RFC822Z),
+				"Scheduled": scheduledTime.Format(time.RFC822Z),
+				"Expected":  expectedTime.Format(time.RFC822Z),
 			}
 
 			result[i] = m
