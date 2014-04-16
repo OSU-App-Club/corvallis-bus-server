@@ -57,3 +57,8 @@ indexes:
   - name: Name
   - name: End
   - name: Start
+
+- kind: Stop
+  properties:
+  - name: Lat
+  - name: Long
