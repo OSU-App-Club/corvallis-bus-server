@@ -239,7 +239,7 @@ func Routes(w http.ResponseWriter, r *http.Request) {
 
 		go memcache.Gob.Set(c, item)
 
-	} else if memError != nil {
+	} else if memError == memcache.ErrServerError {
 		http.Error(w, "Get Routes Error: "+memError.Error(), 500)
 	}
 
@@ -267,22 +267,36 @@ func Routes(w http.ResponseWriter, r *http.Request) {
 
 	// Load stops
 	if strings.ToLower(r.FormValue("stops")) == "true" {
-		chans := make([](chan []*Stop), len(routes))
+		for _, route := range routes {
+			path := make([]*Stop, len(route.Stops))
+			for i, _ := range path {
+				path[i] = new(Stop)
+			}
 
-		for i, route := range routes {
-			chans[i] = make(chan []*Stop, 1)
-
-			go func(chan []*Stop) {
-				var path []*Stop
+			// Check memcache
+			if _, memError := memcache.Gob.Get(c, route.Name+"-Path", &path); memError == memcache.ErrCacheMiss {
 				datastore.GetMulti(c, route.Stops, path)
-				chans[i] <- path
-			}(chans[i])
-		}
 
-		// Load all from channels
-		for i, resultChan := range chans {
-			routes[i].Path = <-resultChan
-			close(resultChan)
+				// Populate IDs
+				for j, stop := range path {
+					stop.ID = route.Stops[j].IntID()
+				}
+
+				route.Path = path
+
+				// Add to memcache
+				item := &memcache.Item{
+					Key:    route.Name + "-Path",
+					Object: path,
+				}
+				memcache.Gob.Set(c, item)
+
+			} else if memError == memcache.ErrServerError {
+				http.Error(w, "Get Path Error: "+memError.Error(), 500)
+			} else {
+				// Use memcache value
+				route.Path = path
+			}
 		}
 	}
 

@@ -19,13 +19,13 @@ This API service is an HTTP GET based set of web services
 
   * Default: returns nothing
   * Params:
-    1. stops -- comma delimited list of stop numbers (required); Default: ""
+    1. stops -- comma delimited list of stop ids (required); Default: ""
     2. date -- date in RFC822Z format; Default: "currentDate"
 
   * Response:
     1. stops: map stopNumber to array of arrival times in RFC822Z
       * Schedule: time bus is scheduled to arrive
-      * Expected: time bus will arrive based on real-time data (often equal to scheduled) 
+      * Expected: time bus will arrive based on real-time data (often equal to scheduled)
 
     * Example
 
