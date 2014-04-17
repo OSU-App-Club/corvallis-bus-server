@@ -84,13 +84,13 @@ func Arrivals(w http.ResponseWriter, r *http.Request) {
 
 	// Used to indicated CTS call finished
 	finished := make(chan error, 1)
-	stopIDToExpectedTime := make(map[int64]([]time.Duration))
+	stopIDToExpectedTime := make(map[int64](map[string]time.Duration))
 
 	// Only make CTS request if asking for within 30 min in the future -- CTS restriction
 	if diff := filterTime.Sub(currentTime); diff >= 0 && diff < 30*time.Minute {
 		// Request CTS realtime information concurrently
 
-		go func(c appengine.Context, stopNumStrings []string, m map[int64]([]time.Duration), finChan chan<- error) {
+		go func(c appengine.Context, stopNumStrings []string, m map[int64](map[string]time.Duration), finChan chan<- error) {
 			client := cts.New(c, baseURL)
 
 			for _, stopNumString := range stopNumStrings {
@@ -99,8 +99,24 @@ func Arrivals(w http.ResponseWriter, r *http.Request) {
 				plat := &cts.Platform{Number: stopNum}
 
 				// Make CTS call
-				client.ETA(plat)
+				ctsRoutes, err := client.ETA(plat)
 
+				c.Debugf("Routes", ctsRoutes, "Error:", err)
+
+				ctsEstimates := make(map[string]time.Duration)
+				for _, ctsRoute := range ctsRoutes {
+					if len(ctsRoute.Destination) > 0 {
+						if ctsRoute.Destination[0].Trip != nil {
+							// This stop+route as valid ETA
+							estDur := time.Duration(ctsRoute.Destination[0].Trip.ETA) * time.Minute
+							ctsEstimates[ctsRoute.Number] = estDur
+
+							c.Debugf("Saved ETA: %s ", ctsRoute.Number, estDur)
+						}
+					}
+				}
+
+				m[stopNum] = ctsEstimates
 			}
 
 			finished <- nil
@@ -141,27 +157,32 @@ func Arrivals(w http.ResponseWriter, r *http.Request) {
 	for stopNum, vals := range arrivals {
 		etas := stopIDToExpectedTime[stopNum]
 
+		if len(etas) > len(vals) {
+			c.Errorf("Arrival mismatch  at stop %d", stopNum, "Time: ", durationSinceMidnight)
+		}
+
 		result := make([](map[string]string), len(vals))
 
 		// Loop over arrival array
 		for i, val := range vals {
+			// Get route
+			var route Route
+			datastore.Get(c, val.Route, &route)
+
 			// Use this arrival to determine information
 			scheduled := val.Scheduled
 			expected := scheduled
 
-			if i < len(etas) {
+			ctsExpected, ok := etas[route.Name]
+			if ok {
 				// Add eta offset
-				expected = expected + etas[i]
+				expected = durationSinceMidnight + ctsExpected
 			}
 
 			//Convert to times
 			midnight := time.Date(filterTime.Year(), filterTime.Month(), filterTime.Day(), 0, 0, 0, 0, loc)
 			scheduledTime := midnight.Add(scheduled)
 			expectedTime := midnight.Add(expected)
-
-			// Get route
-			var route Route
-			datastore.Get(c, val.Route, &route)
 
 			m := map[string]string{
 				"Route":     route.Name,
