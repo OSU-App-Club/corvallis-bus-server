@@ -29,7 +29,6 @@ func init() {
 	// Development help
 	http.HandleFunc("/platforms", platforms)
 	http.HandleFunc("/routes_list", routes_list)
-	http.HandleFunc("/cron/init", CreateDatabase)
 }
 
 /*

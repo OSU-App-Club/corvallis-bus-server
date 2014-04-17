@@ -75,6 +75,8 @@ func updateWithGoogleTransit(c appengine.Context, tagToNumber map[int64]int64, r
 	// Combine all information from above into schedule
 	//
 
+	c.Infof("Found %d trips", len(scheduleRouteMap))
+
 	// Loop over each sub-route -- sort SchedInfo
 	for trip_id, stops := range scheduleRouteMap {
 
@@ -84,8 +86,16 @@ func updateWithGoogleTransit(c appengine.Context, tagToNumber map[int64]int64, r
 			continue // Not a route that we handle
 		}
 
+		c.Infof("Trip ID: %s", trip_id)
+
+		//
+		// Lookups
+		//
+
 		route := routeMap[connexionzRouteName]  // Route by Connexionz name
 		routeKey := keyMap[connexionzRouteName] // Key for above route
+
+		days := calendarMap[tripIDToServiceID[trip_id]].days
 
 		// Add start & end information on route (might happen multiple times)
 		route.Start = calendarMap[tripIDToServiceID[trip_id]].start
@@ -96,7 +106,7 @@ func updateWithGoogleTransit(c appengine.Context, tagToNumber map[int64]int64, r
 		sort.Sort(ByID(stops))
 
 		// Enter initial point --Arrival Objects (parent is stop)
-		createArrival(c, stops[0], true, routeKey, route.Name, stopIDToNumber, calendarMap[tripIDToServiceID[trip_id]].days)
+		createArrival(c, stops[0], true, routeKey, route.Name, stopIDToNumber, days)
 
 		for i := 0; i < len(stops)-1; i++ {
 			if stops[i].arrive != 0 {
@@ -122,13 +132,13 @@ func updateWithGoogleTransit(c appengine.Context, tagToNumber map[int64]int64, r
 
 					// Modify time
 					stop.arrive = stops[i].arrive + time.Duration(midI-i)*changeDir
-					createArrival(c, stop, true, routeKey, route.Name, stopIDToNumber, calendarMap[tripIDToServiceID[trip_id]].days)
+					createArrival(c, stop, true, routeKey, route.Name, stopIDToNumber, days)
 				}
 
 				i = j - 1 // Move to next chunk -- used next loop
 
 				// Create arrival
-				createArrival(c, stops[j], true, routeKey, route.Name, stopIDToNumber, calendarMap[tripIDToServiceID[trip_id]].days)
+				createArrival(c, stops[j], true, routeKey, route.Name, stopIDToNumber, days)
 
 			} else {
 				// Will always have known point at start and end

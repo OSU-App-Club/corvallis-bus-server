@@ -1,9 +1,7 @@
-application: corvallis-bus 
+application: corvallis-bus
 version: 1
 runtime: go
 api_version: go1
-automatic_scaling:
-  max_concurrent_requests: 400
 
 handlers:
 - url: /.*

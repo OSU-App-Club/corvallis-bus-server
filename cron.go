@@ -3,56 +3,70 @@ package corvallisbus
 import (
 	"appengine"
 	"appengine/datastore"
+	"appengine/runtime"
 	cts "github.com/cvanderschuere/go-connexionz"
 	"net/http"
 )
 
+func init() {
+	http.HandleFunc("/cron/init", CreateDatabase)
+	http.HandleFunc("/_ah/start", start)
+}
+
+func start(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	c.Infof("Started Instance")
+}
+
 // Sets up datastore to fit current structure -- removes all existing
 func CreateDatabase(w http.ResponseWriter, r *http.Request) {
 
-	c := appengine.NewContext(r)
+	context := appengine.NewContext(r)
 
-	clearDatastore(c) //Delete everything
+	runtime.RunInBackground(context, func(c appengine.Context) {
 
-	// Create CTS Client
-	client := cts.New(c, baseURL)
+		//clearDatastore(c) //Delete everything
 
-	// Download all route patterns -- create blank stops & routes
-	addRoutes(client, c)
+		// Create CTS Client
+		client := cts.New(c, baseURL)
 
-	// Download platforms and update datastore
-	plats, _ := client.Platforms()
-	updatePlatforms(plats, c)
+		// Download all route patterns -- create blank stops & routes
+		addRoutes(client, c)
 
-	// Create map between platform tag and platform number -- GoogleTransit uses tag
-	// tag -> number (GT -> connexionz)
-	tagToNumber := make(map[int64]int64)
-	for _, p := range plats {
-		tagToNumber[p.Tag] = p.Number
-	}
+		// Download platforms and update datastore
+		plats, _ := client.Platforms()
+		updatePlatforms(plats, c)
 
-	// Create map between pattern names in Connexionz and GT (static for now)
-	// GT -> connexionz
-	nameMap := map[string]string{
-		"R1":    "1",
-		"R2":    "2",
-		"R3":    "3",
-		"R4":    "4",
-		"R5":    "5",
-		"R6":    "6",
-		"R7":    "7",
-		"R8":    "8",
-		"BB_N":  "BBN",
-		"BB_SE": "BBSE",
-		"BB_SW": "BBSW",
-		"C1":    "C1",
-		"C2":    "C2",
-		"C3":    "C3",
-		"CVA":   "CVA",
-	}
+		// Create map between platform tag and platform number -- GoogleTransit uses tag
+		// tag -> number (GT -> connexionz)
+		tagToNumber := make(map[int64]int64)
+		for _, p := range plats {
+			tagToNumber[p.Tag] = p.Number
+		}
 
-	// Download/parse/input Google Transit
-	updateWithGoogleTransit(c, tagToNumber, nameMap)
+		// Create map between pattern names in Connexionz and GT (static for now)
+		// GT -> connexionz
+		nameMap := map[string]string{
+			"R1":    "1",
+			"R2":    "2",
+			"R3":    "3",
+			"R4":    "4",
+			"R5":    "5",
+			"R6":    "6",
+			"R7":    "7",
+			"R8":    "8",
+			"BB_N":  "BBN",
+			"BB_SE": "BBSE",
+			"BB_SW": "BBSW",
+			"C1":    "C1",
+			"C2":    "C2",
+			"C3":    "C3",
+			"CVA":   "CVA",
+		}
+
+		// Download/parse/input Google Transit
+		updateWithGoogleTransit(c, tagToNumber, nameMap)
+	})
 }
 
 //
