@@ -83,13 +83,13 @@ func Arrivals(w http.ResponseWriter, r *http.Request) {
 
 	// Used to indicated CTS call finished
 	finished := make(chan error, 1)
-	stopIDToExpectedTime := make(map[int64](map[string]time.Duration))
+	stopIDToExpectedTime := make(map[int64](map[string]([]time.Duration)))
 
 	// Only make CTS request if asking for within 30 min in the future -- CTS restriction
 	if diff := filterTime.Sub(currentTime); diff >= 0 && diff < 30*time.Minute {
 		// Request CTS realtime information concurrently
 
-		go func(c appengine.Context, stopNumStrings []string, m map[int64](map[string]time.Duration), finChan chan<- error) {
+		go func(c appengine.Context, stopNumStrings []string, m map[int64](map[string]([]time.Duration)), finChan chan<- error) {
 			client := cts.New(c, baseURL)
 
 			for _, stopNumString := range stopNumStrings {
@@ -102,13 +102,20 @@ func Arrivals(w http.ResponseWriter, r *http.Request) {
 
 				c.Debugf("Routes", ctsRoutes, "Error:", err)
 
-				ctsEstimates := make(map[string]time.Duration)
+				ctsEstimates := make(map[string]([]time.Duration))
 				for _, ctsRoute := range ctsRoutes {
 					if len(ctsRoute.Destination) > 0 {
 						if ctsRoute.Destination[0].Trip != nil {
 							// This stop+route as valid ETA
 							estDur := time.Duration(ctsRoute.Destination[0].Trip.ETA) * time.Minute
-							ctsEstimates[ctsRoute.Number] = estDur
+
+							// Create new slice or append
+							estimateSlice, ok := ctsEstimates[ctsRoute.Number]
+							if !ok {
+								ctsEstimates[ctsRoute.Number] = []time.Duration{estDur}
+							} else {
+								ctsEstimates[ctsRoute.Number] = append(estimateSlice, estDur)
+							}
 
 							c.Debugf("Saved ETA: %s ", ctsRoute.Number, estDur)
 						}
@@ -175,7 +182,14 @@ func Arrivals(w http.ResponseWriter, r *http.Request) {
 			ctsExpected, ok := etas[route.Name]
 			if ok {
 				// Add eta offset
-				expected = durationSinceMidnight + ctsExpected
+				expected = durationSinceMidnight + ctsExpected[0]
+
+				// Update stored times
+				if len(ctsExpected) == 1 {
+					delete(etas, route.Name)
+				} else {
+					etas[route.Name] = ctsExpected[1:]
+				}
 			}
 
 			//Convert to times
