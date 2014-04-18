@@ -39,8 +39,8 @@ type Route struct {
 	Stops     []*datastore.Key `json:"-"`                        // organized by order travelled
 	Path      []*Stop          `datastore:"-" json:",omitempty"` // Calculated at runtime
 
-	Start time.Time // Begining of validity of arrivals
-	End   time.Time // End of validity of arrivals
+	Start time.Time `json:"-"` // Begining of validity of arrivals
+	End   time.Time `json:"-"` // End of validity of arrivals
 }
 
 type Stop struct {

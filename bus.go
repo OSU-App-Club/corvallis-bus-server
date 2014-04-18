@@ -248,7 +248,6 @@ func Routes(w http.ResponseWriter, r *http.Request) {
 
 	// Check if should only return only only names
 	if strings.ToLower(r.FormValue("onlyNames")) == "true" {
-		q = q.Project("Name", "Start", "End")
 		cacheName += "OnlyName"
 	}
 
@@ -257,12 +256,27 @@ func Routes(w http.ResponseWriter, r *http.Request) {
 	// Try to get from memcache
 	if _, memError := memcache.Gob.Get(c, cacheName, &routes); memError == memcache.ErrCacheMiss {
 		// Load from datastore
-
 		_, err := q.GetAll(c, &routes)
+
+		c.Debugf("Result[%d]: ", len(routes), routes)
 
 		if err != nil {
 			http.Error(w, "Get Routes Error: "+err.Error(), 500)
 			return
+		}
+
+		// Clear unneed info
+		if strings.ToLower(r.FormValue("onlyNames")) == "true" {
+			for _, route := range routes {
+				route.AdditionalName = ""
+				route.Description = ""
+				route.URL = ""
+				route.Polyline = ""
+				route.Color = ""
+				route.Direction = ""
+				route.Start = time.Time{}
+				route.End = time.Time{}
+			}
 		}
 
 		// Save in memcache
@@ -272,7 +286,6 @@ func Routes(w http.ResponseWriter, r *http.Request) {
 		}
 
 		go memcache.Gob.Set(c, item)
-
 	} else if memError == memcache.ErrServerError {
 		http.Error(w, "Get Routes Error: "+memError.Error(), 500)
 	}

@@ -77,9 +77,7 @@ This API service is an HTTP GET based set of web services
           "URL":"http://www.corvallisoregon.gov/index.aspx?page=822",
           "Polyline":"_a_oGh{ioVL{@RHdAb@fAd@p@VpClAQlAa@`CCPWvA_@rBq@lEw@xE}@c@_CcAiEgBIj@QdAYfBo@lEm@zDo@vDKn@c@nCm@zDo@zDMx@a@hC{@~Fy@|FGj@CPk@nEo@nEO\\a@j@i@n@{@dAcA~AyBrCUXo@v@iB`CYf@?l@?\\?jD?T@`E?nE@bE?^FhD?p@?DGpC@xE}@?cC@}D?{@?k@@eABS?gB?sA@eB?{EB_A?{D@uAtBCDKLoDzFKNyC|EGLgBxCc@r@k@|@aBbCw@hAs@x@]`@wApAiClC_A`As@p@_B`BiCjCSTIF}DzD}@|@mAlAq@j@u@b@w@R??{@DcA@s@K]GKGOE[QWSq@s@Yg@EGKMUY_@c@[_@i@g@UU_@ScAi@OGi@MYAWFULMRoAfCu@dBOVU`@WZGFa@^s@NaAHAiA@}@Bo@P}ALw@XkBN{@d@yCHs@JwABaA@m@@eL?_I@_L?wHAqAGuBCk@GaAIwAGuB?i@?aCDeBHuBPiFJaGB}C@iC?qG?w@@uAHaAL}@RcA\\eAn@kCNcAPsBDuB?yAM}AQ_BUqA[iAo@uB_@mAYaAUw@[gAScAUcBIuACyAAcC?qB@wA?qA?uAGeBCq@AuU?m@BqAB_AFoBL}AJoADo@Bs@?gAEmBGy@QmAO_AKs@Iy@CYCa@Eq@Cq@CuB?oAEgECuD?mE?aCBk@H{@Jo@z@cEXy@d@uAPcANmA@m@AcBA}JBo@Ju@X}AV_Aj@_BrD{Iz@mBX_@PIj@Kh@Hj@\\^l@|AdD^f@@BXXZJZFfA@pAGt@Br@Np@TxCnBfFhEp@ZVcAB_@@aHpA??{DIWOMOCM@OLIRA`@@~CA`HC^WbAq@[gFiEk@a@mBmAq@Us@Ou@CqAF@zC?zABbC?bDDfJBjDFlIDtH@~@?~E?dBeGsCo@[_DwAqDaB}EyB{CwAKn@Iz@Cj@?`C?vA?tBBtDDfE?nABtBBp@Dp@B`@BXHx@Jr@N~@PlAFx@DlB?fACr@En@KnAM|AGnBC~@CpA?l@@tB?~QBp@FdB?tA?pAAvA?pB@bCBxAHtATbB~Ag@DAn@Mp@E`AFlBn@lCxBnAt@x@~@d@fAJ`@NvAEvGHnCw@?sEAQ@w@Hu@Lc@FOBSDEtBQrBObAo@jC]dASbAM|@I`A?b@Ap@?v@?pGAhCC|C_A?k@Lk@Zi@f@]v@yAvEg@zAwA~D[r@w@jAs@r@u@h@}@^^dCh@|DTdBL`ARzBBd@NnCHzBBtB@vAj@CXHdA\\`@Nf@T`AZ~@HlAC`B??~H?|HAfBAl@C`AKvAIr@e@xCOz@g@bDQ|ACn@A|@@hA`AIr@O`@_@^c@Ta@NWt@eBZm@r@yALSTMVGX@h@LrAp@^RTTh@f@Z^^b@TXj@|@p@r@VRZPZL\\Fr@JbAAz@Ev@St@c@p@k@Z[p@q@zFyF\\]hCkC~AaBrBsBf@i@`BcBvAqApA{Av@iA`BcCj@}@jCmEFMt@mAbBoCzDkGNStAuBzFAz@AdGAzDAR?dACfBA|D?`EA?_BAyBFwC?q@GiD?_@AcE?oEAaE?U?iE?m@Xg@`AoAf@q@n@w@nCmDbA_BdBuB`@k@N]n@oEn@aFFk@x@}Fz@_Gn@cEn@{Dl@{Dn@_En@wDTwAVcBn@mEXgBZqBt@sEv@sEn@gE@EBMN{@j@ITyA",
           "Color":"00ADEE",
-          "Direction":"Clockwise",
-          "Start":"2013-07-23T07:00:00Z",
-          "End":"2015-07-23T07:00:00Z"
+          "Direction":"Clockwise"
         }
       ]
     }

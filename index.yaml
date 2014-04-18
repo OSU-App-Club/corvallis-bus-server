@@ -58,6 +58,11 @@ indexes:
   - name: End
   - name: Start
 
+- kind: Route
+  properties:
+  - name: Name
+  - name: Stops
+
 - kind: Stop
   properties:
   - name: Lat
