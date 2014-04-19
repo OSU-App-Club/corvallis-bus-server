@@ -26,7 +26,7 @@ func init() {
 	http.HandleFunc("/stops", Stops)
 	http.HandleFunc("/arrivals", Arrivals)
 
-	http.HandleFunc("/addThings", sample)
+	//http.HandleFunc("/addThings", sample)
 
 }
 
