@@ -1,4 +1,4 @@
 cron:
-- description: Initial setup of datastore (Deletes and reinits)
-  url: /cron/init
-  schedule: 17 of april 09:35
+#- description: Initial setup of datastore (Deletes and reinits)
+#  url: /cron/init
+#  schedule: 17 of april 09:35

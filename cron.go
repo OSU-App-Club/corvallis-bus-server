@@ -4,8 +4,9 @@ import (
 	"appengine"
 	"appengine/datastore"
 	"appengine/runtime"
-	cts "github.com/cvanderschuere/go-connexionz"
 	"net/http"
+
+	cts "github.com/cvanderschuere/go-connexionz"
 )
 
 func init() {
@@ -23,6 +24,7 @@ func CreateDatabase(w http.ResponseWriter, r *http.Request) {
 
 	context := appengine.NewContext(r)
 
+	// Allows for unlimited time limit
 	runtime.RunInBackground(context, func(c appengine.Context) {
 
 		//clearDatastore(c) //Delete everything
