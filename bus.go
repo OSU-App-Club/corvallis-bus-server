@@ -11,6 +11,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	cts "github.com/cvanderschuere/go-connexionz"
@@ -91,37 +92,45 @@ func Arrivals(w http.ResponseWriter, r *http.Request) {
 		go func(c appengine.Context, stopNumStrings []string, m map[int64](map[string]([]time.Duration)), finChan chan<- error) {
 			client := cts.New(c, baseURL)
 
+			var wg sync.WaitGroup
+
+			// Loop over stops and make arrival calls for each
 			for _, stopNumString := range stopNumStrings {
-				stopNum, _ := strconv.ParseInt(stopNumString, 10, 64)
+				wg.Add(1)
 
-				plat := &cts.Platform{Number: stopNum}
+				go func(numString string) {
+					defer wg.Done()
 
-				// Make CTS call
-				ctsRoutes, _ := client.ETA(plat)
+					stopNum, _ := strconv.ParseInt(numString, 10, 64)
 
-				ctsEstimates := make(map[string]([]time.Duration))
-				for _, ctsRoute := range ctsRoutes {
-					if len(ctsRoute.Destination) > 0 {
-						if ctsRoute.Destination[0].Trip != nil {
-							// This stop+route as valid ETA
-							estDur := time.Duration(ctsRoute.Destination[0].Trip.ETA) * time.Minute
+					plat := &cts.Platform{Number: stopNum}
 
-							// Create new slice or append
-							estimateSlice, ok := ctsEstimates[ctsRoute.Number]
-							if !ok {
-								ctsEstimates[ctsRoute.Number] = []time.Duration{estDur}
-							} else {
-								ctsEstimates[ctsRoute.Number] = append(estimateSlice, estDur)
+					// Make CTS call
+					ctsRoutes, _ := client.ETA(plat)
+
+					ctsEstimates := make(map[string]([]time.Duration))
+					for _, ctsRoute := range ctsRoutes {
+						if len(ctsRoute.Destination) > 0 {
+							if ctsRoute.Destination[0].Trip != nil {
+								// This stop+route as valid ETA
+								estDur := time.Duration(ctsRoute.Destination[0].Trip.ETA) * time.Minute
+
+								// Create new slice or append
+								estimateSlice, ok := ctsEstimates[ctsRoute.Number]
+								if !ok {
+									ctsEstimates[ctsRoute.Number] = []time.Duration{estDur}
+								} else {
+									ctsEstimates[ctsRoute.Number] = append(estimateSlice, estDur)
+								}
 							}
-
-							c.Debugf("Saved ETA: %s ", ctsRoute.Number, estDur)
 						}
 					}
-				}
 
-				m[stopNum] = ctsEstimates
+					m[stopNum] = ctsEstimates
+				}(stopNumString)
 			}
 
+			wg.Wait()
 			finished <- nil
 
 		}(c, sepStops, stopIDToExpectedTime, finished)
