@@ -11,7 +11,7 @@ basic_scaling:
 handlers:
 - url: /cron/.*
   script: _go_app
-  login: required
+  login: admin
 
 - url: /_ah/.*
   script: _go_app

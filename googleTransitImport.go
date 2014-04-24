@@ -108,6 +108,7 @@ func updateWithGoogleTransit(c appengine.Context, tagToNumber map[int64]int64, r
 		// Enter initial point --Arrival Objects (parent is stop)
 		createArrival(c, stops[0], true, routeKey, route.Name, stopIDToNumber, days)
 
+		// Shouldn't have to get to the last one (len(stops)-1) because that one should be known
 		for i := 0; i < len(stops)-1; i++ {
 			if stops[i].arrive != 0 {
 
@@ -132,13 +133,17 @@ func updateWithGoogleTransit(c appengine.Context, tagToNumber map[int64]int64, r
 
 					// Modify time
 					stop.arrive = stops[i].arrive + time.Duration(midI-i)*changeDir
-					createArrival(c, stop, true, routeKey, route.Name, stopIDToNumber, days)
+					createArrival(c, stop, false, routeKey, route.Name, stopIDToNumber, days)
 				}
 
 				i = j - 1 // Move to next chunk -- used next loop
 
-				// Create arrival
-				createArrival(c, stops[j], true, routeKey, route.Name, stopIDToNumber, days)
+				// Create arrival -- only if is not last in route
+				if j < (len(stops) - 1) {
+					createArrival(c, stops[j], true, routeKey, route.Name, stopIDToNumber, days)
+				} else {
+					c.Debugf("Skipping:", route.Name, stops[j])
+				}
 
 			} else {
 				// Will always have known point at start and end
