@@ -80,13 +80,13 @@ func Arrivals(w http.ResponseWriter, r *http.Request) {
 
 	// Used to indicated CTS call finished
 	finished := make(chan error, 1)
-	stopIDToExpectedTime := make(map[int64](map[string]([]time.Duration)))
+	stopIDToExpectedTime := make(map[int64]([]ETA))
 
 	// Only make CTS request if asking for within 30 min in the future -- CTS restriction
 	if diff := filterTime.Sub(currentTime); diff >= 0 && diff < 30*time.Minute {
 		// Request CTS realtime information concurrently
 
-		go func(c appengine.Context, stopNumStrings []string, m map[int64](map[string]([]time.Duration)), finChan chan<- error) {
+		go func(c appengine.Context, stopNumStrings []string, m map[int64]([]ETA), finChan chan<- error) {
 			client := cts.New(c, baseURL)
 
 			var wg sync.WaitGroup
@@ -105,20 +105,19 @@ func Arrivals(w http.ResponseWriter, r *http.Request) {
 					// Make CTS call
 					ctsRoutes, _ := client.ETA(plat)
 
-					ctsEstimates := make(map[string]([]time.Duration))
+					ctsEstimates := []ETA{}
 					for _, ctsRoute := range ctsRoutes {
 						if len(ctsRoute.Destination) > 0 {
 							if ctsRoute.Destination[0].Trip != nil {
 								// This stop+route as valid ETA
 								estDur := time.Duration(ctsRoute.Destination[0].Trip.ETA) * time.Minute
 
-								// Create new slice or append
-								estimateSlice, ok := ctsEstimates[ctsRoute.Number]
-								if !ok {
-									ctsEstimates[ctsRoute.Number] = []time.Duration{estDur}
-								} else {
-									ctsEstimates[ctsRoute.Number] = append(estimateSlice, estDur)
+								// Create new eta
+								e := ETA{
+									route:    ctsRoute.Number,
+									expected: estDur,
 								}
+								ctsEstimates = append(ctsEstimates, e)
 							}
 						}
 					}
@@ -205,32 +204,43 @@ func Arrivals(w http.ResponseWriter, r *http.Request) {
 		etas := stopIDToExpectedTime[stopNum]
 
 		if len(etas) > len(vals) {
-			c.Errorf("Arrival mismatch at stop %d", stopNum, "Time: ", durationSinceMidnight)
+			c.Infof("Added %d etas to stop %s", len(etas)-len(vals), stopNum)
+
+			// Add additional etas to scheduled times
+			l := len(vals)
+			for _, eta := range etas[l:] {
+				// Make new arrival
+				r := &Arrival{
+					routeName: eta.route,
+					Scheduled: eta.expected,
+				}
+				c.Debugf("Appending:", eta, r)
+
+				vals = append(vals, r)
+			}
 		}
 
 		result := make([](map[string]string), len(vals))
 
 		// Loop over arrival array
 		for i, val := range vals {
-			// Get route
-			var route Route
-			datastore.Get(c, val.Route, &route)
+			rName := val.routeName
+
+			if rName == "" {
+				// Get route
+				var route Route
+				datastore.Get(c, val.Route, &route)
+				rName = route.Name
+			}
 
 			// Use this arrival to determine information
 			scheduled := val.Scheduled
 			expected := scheduled
 
-			ctsExpected, ok := etas[route.Name]
-			if ok {
+			if len(etas) > 0 {
 				// Add eta offset
-				expected = durationSinceMidnight + ctsExpected[0]
-
-				// Update stored times
-				if len(ctsExpected) == 1 {
-					delete(etas, route.Name)
-				} else {
-					etas[route.Name] = ctsExpected[1:]
-				}
+				expected = durationSinceMidnight + etas[0].expected
+				etas = etas[1:] // Skip to next one
 			}
 
 			//Convert to times
@@ -239,7 +249,7 @@ func Arrivals(w http.ResponseWriter, r *http.Request) {
 			expectedTime := midnight.Add(expected)
 
 			m := map[string]string{
-				"Route":     route.Name,
+				"Route":     rName,
 				"Scheduled": scheduledTime.Format(time.RFC822Z),
 				"Expected":  expectedTime.Format(time.RFC822Z),
 			}

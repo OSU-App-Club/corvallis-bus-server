@@ -75,7 +75,8 @@ type Arrival struct {
 	// Parent will be Stop associated with this time
 	// Run query to find
 
-	Route *datastore.Key
+	Route     *datastore.Key
+	routeName string `json:"-" datastore:"-"`
 
 	Scheduled time.Duration // Stored as offset from midnight in US/Pacific
 	//Expected  time.Duration // Calculated from ETA when within 30 minutes of arrival
@@ -90,6 +91,11 @@ type Arrival struct {
 	Friday    bool `json:"-"`
 	Saturday  bool `json:"-"`
 	Sunday    bool `json:"-"`
+}
+
+type ETA struct {
+	route    string
+	expected time.Duration
 }
 
 // https://developers.google.com/transit/gtfs/reference?csw=1#calendar_dates_fields
