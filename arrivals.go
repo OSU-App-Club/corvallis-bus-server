@@ -59,199 +59,31 @@ func Arrivals(c appengine.Context, w http.ResponseWriter, r *http.Request) {
 		filterTime = currentTime
 	}
 
-	// Calculate duration since midnight
-	hour, min, sec := filterTime.Clock()
-	durationSinceMidnight := time.Duration(hour)*time.Hour + time.Duration(min)*time.Minute + time.Duration(sec)*time.Second
+	// Determine if arrivals could be avaliable
+	diff := filterTime.Sub(currentTime)
+	checkCTS := diff >= 0 && diff < 30*time.Minute
 
-	// Used to indicated CTS call finished
-	finished := make(chan error, 1)
-	stopIDToExpectedTime := make(map[int64]([]ETA))
-
-	// Only make CTS request if asking for within 30 min in the future -- CTS restriction
-	if diff := filterTime.Sub(currentTime); diff >= 0 && diff < 30*time.Minute {
-		// Request CTS realtime information concurrently
-
-		go func(c appengine.Context, stopNumStrings []string, m map[int64]([]ETA), finChan chan<- error) {
-			client := cts.New(c, baseURL)
-
-			var wg sync.WaitGroup
-
-			// Loop over stops and make arrival calls for each
-			for _, stopNumString := range stopNumStrings {
-				wg.Add(1)
-
-				go func(numString string) {
-					defer wg.Done()
-
-					stopNum, _ := strconv.ParseInt(numString, 10, 64)
-
-					plat := &cts.Platform{Number: stopNum}
-
-					// Make CTS call
-					ctsRoutes, _ := client.ETA(plat)
-
-					ctsEstimates := []ETA{}
-					for _, ctsRoute := range ctsRoutes {
-						if len(ctsRoute.Destination) > 0 {
-							if ctsRoute.Destination[0].Trip != nil {
-								// This stop+route as valid ETA
-								estDur := time.Duration(ctsRoute.Destination[0].Trip.ETA) * time.Minute
-
-								// Create new eta
-								e := ETA{
-									route:    ctsRoute.Number,
-									expected: estDur,
-								}
-								ctsEstimates = append(ctsEstimates, e)
-							}
-						}
-					}
-
-					m[stopNum] = ctsEstimates
-				}(stopNumString)
-			}
-
-			wg.Wait()
-			finished <- nil
-
-		}(c, sepStops, stopIDToExpectedTime, finished)
-	} else {
-		finished <- nil
-		close(finished)
-	}
-
+	// Load arrivals from datastore add/or CTS
 	var wg sync.WaitGroup
 	locker := new(sync.Mutex)
-
-	// Load all arrival information from datastore for given stop
-	arrivals := make(map[int64]([]*Arrival))
-	for _, stopString := range sepStops {
+	output := make(map[string]([]map[string]string))
+	for _, stopID := range sepStops {
 		wg.Add(1)
 
-		go func(stopNumString string) {
+		go func(s string) {
 			defer wg.Done()
+			stopNum, _ := strconv.ParseInt(s, 10, 64)
+			stopArrivals := findArrivalsForStop(c, stopNum, checkCTS, &filterTime)
 
-			var dest []*Arrival
-			stopNum, _ := strconv.ParseInt(stopNumString, 10, 64)
-
-			// Check memcache
-			cacheName := "arrivalCache:" + stopNumString + ":" + filterTime.Weekday().String()
-			if _, memError := memcache.Gob.Get(c, cacheName, &dest); memError == memcache.ErrCacheMiss {
-				// Repopulate memcache
-				// Query for arrival
-				parent := datastore.NewKey(c, "Stop", "", stopNum, nil)
-				q := datastore.NewQuery("Arrival").Ancestor(parent)
-				//q = q.Filter("Scheduled >=", durationSinceMidnight)
-				q = q.Filter(filterTime.Weekday().String()+" =", true)
-				q = q.Order("Scheduled")
-
-				_, getError := q.GetAll(c, &dest)
-				if getError != nil {
-					http.Error(w, "Arrival Error: "+getError.Error(), 500)
-					return //Try next loop -- bad stopNum
-				}
-
-				// Add to memcache
-				item := &memcache.Item{
-					Key:    cacheName,
-					Object: dest,
-				}
-
-				go memcache.Gob.Set(c, item) // We do enough work below that this will finish
-
-				// Filter based on filterTime
-				filtered := filterArrivalsOnTime(durationSinceMidnight, dest)
-				locker.Lock()
-				arrivals[stopNum] = filtered
-				locker.Unlock()
-
-			} else if memError == memcache.ErrServerError {
-				http.Error(w, "Get Arrivals Error: "+memError.Error(), 500)
-			} else {
-				// Filter based on filterTime
-				filtered := filterArrivalsOnTime(durationSinceMidnight, dest)
-				locker.Lock()
-				arrivals[stopNum] = filtered
-				locker.Unlock()
-			}
-		}(stopString)
+			// Add to map -- mutex protected
+			locker.Lock()
+			output[s] = stopArrivals
+			locker.Unlock()
+		}(stopID)
 	}
 
-	// Wait until all database calls are done
+	// Wait for all stops to finish
 	wg.Wait()
-
-	// Wait until cts call finishes
-	<-finished
-
-	// Create maps with given information
-	output := make(map[string][](map[string]string))
-	for stopNum, vals := range arrivals {
-		etas := stopIDToExpectedTime[stopNum]
-
-		// Check whether we should drop the first scheduled arrival or not
-		// Bias towards buses being late -- expected is not more than a loop late
-		if len(etas) > 0 && len(vals) > 0 && durationSinceMidnight+etas[0].expected < (vals[0].Scheduled+50*time.Minute) {
-			// Within 50 minutes late ... don't drop
-		} else if len(vals) > 0 {
-			vals = vals[1:]
-		}
-
-		if len(etas) > len(vals) {
-			c.Infof("Added %d etas to stop %s", len(etas)-len(vals), stopNum)
-
-			// Add additional etas to scheduled times
-			l := len(vals)
-			for _, eta := range etas[l:] {
-				// Make new arrival
-				r := &Arrival{
-					routeName: eta.route,
-					Scheduled: eta.expected,
-				}
-				c.Debugf("Appending:", eta, r)
-
-				vals = append(vals, r)
-			}
-		}
-
-		result := make([](map[string]string), len(vals))
-
-		// Loop over arrival array
-		for i, val := range vals {
-			rName := val.routeName
-
-			if rName == "" {
-				// Get route
-				var route Route
-				datastore.Get(c, val.Route, &route)
-				rName = route.Name
-			}
-
-			// Use this arrival to determine information
-			scheduled := val.Scheduled
-			expected := scheduled
-
-			if len(etas) > 0 {
-				// Add eta offset
-				expected = durationSinceMidnight + etas[0].expected
-				etas = etas[1:] // Skip to next one
-			}
-
-			//Convert to times
-			midnight := time.Date(filterTime.Year(), filterTime.Month(), filterTime.Day(), 0, 0, 0, 0, loc)
-			scheduledTime := midnight.Add(scheduled)
-			expectedTime := midnight.Add(expected)
-
-			m := map[string]string{
-				"Route":     rName,
-				"Scheduled": scheduledTime.Format(time.RFC822Z),
-				"Expected":  expectedTime.Format(time.RFC822Z),
-			}
-
-			result[i] = m
-		}
-
-		output[strconv.FormatInt(stopNum, 10)] = result
-	}
 
 	// Output JSON
 	data, errJSON := json.Marshal(output)
@@ -263,6 +95,182 @@ func Arrivals(c appengine.Context, w http.ResponseWriter, r *http.Request) {
 	// Output JSON
 	w.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(w, string(data))
+}
+
+func findArrivalsForStop(c appengine.Context, stopNum int64, checkCTS bool, filterTime *time.Time) []map[string]string {
+
+	// Realtime
+	realtimeETAs := make(chan []*ETA, 1)
+	if checkCTS {
+		go getRealtimeArrivals(c, stopNum, filterTime, realtimeETAs)
+	} else {
+		realtimeETAs <- nil
+	}
+
+	// Schedule
+	scheduledArrivals := make(chan []*Arrival, 1)
+	getArrivalsFromDatastore(c, stopNum, filterTime, scheduledArrivals)
+
+	// Sync point -- make sure all data is known
+	scheds := <-scheduledArrivals
+	etas := <-realtimeETAs
+
+	// Check whether we should drop the first scheduled arrival or not
+	// Bias towards buses being late -- expected is not more than 50 min late
+	if len(etas) > 0 && len(scheds) > 0 && etas[0].expected < (scheds[0].Scheduled+50*time.Minute) {
+		// Within 50 minutes late ... don't drop
+	} else if len(scheds) > 0 {
+		scheds = scheds[1:]
+	}
+
+	// Check if we should add extra etas
+	if len(etas) > len(scheds) {
+		l := len(scheds) // Save here because vals is growing
+		for _, eta := range etas[l:] {
+			r := &Arrival{
+				routeName: eta.route,
+				Scheduled: eta.expected,
+			}
+			scheds = append(scheds, r)
+		}
+	}
+
+	// Create arrivals
+	var wg sync.WaitGroup
+	arrivalOutput := make([](map[string]string), len(scheds))
+	for i, arr := range scheds {
+		wg.Add(1)
+		go func(j int, a *Arrival) {
+			defer wg.Done()
+			var o map[string]string
+			if len(etas) > j {
+				o = prepareArrivalOutput(c, arr, etas[j], filterTime)
+			} else {
+				o = prepareArrivalOutput(c, arr, nil, filterTime)
+			}
+			arrivalOutput[j] = o // Concurrent write
+		}(i, arr)
+	}
+
+	wg.Wait() // Wait until each is finished
+	return arrivalOutput
+}
+
+// Fetch realtime info from connexionz
+func getRealtimeArrivals(c appengine.Context, stopNum int64, filterTime *time.Time, etaChan chan []*ETA) {
+	client := cts.New(c, baseURL)
+
+	plat := &cts.Platform{Number: stopNum}
+
+	// Make CTS call
+	ctsRoutes, _ := client.ETA(plat)
+
+	hour, min, sec := filterTime.Clock()
+	durationSinceMidnight := time.Duration(hour)*time.Hour + time.Duration(min)*time.Minute + time.Duration(sec)*time.Second
+
+	ctsEstimates := []*ETA{}
+	for _, ctsRoute := range ctsRoutes {
+		if len(ctsRoute.Destination) > 0 {
+			if ctsRoute.Destination[0].Trip != nil {
+				// This stop+route as valid ETA
+				estDur := time.Duration(ctsRoute.Destination[0].Trip.ETA) * time.Minute
+
+				// Create new eta
+				e := &ETA{
+					route:    ctsRoute.Number,
+					expected: durationSinceMidnight + estDur,
+				}
+				ctsEstimates = append(ctsEstimates, e)
+			}
+		}
+	}
+
+	etaChan <- ctsEstimates
+}
+
+func getArrivalsFromDatastore(c appengine.Context, stopNum int64, filterTime *time.Time, arrivalChan chan []*Arrival) {
+	var dest []*Arrival
+	stopNumString := strconv.FormatInt(stopNum, 10)
+
+	// Calc duration since midnight
+	hour, min, sec := filterTime.Clock()
+	durationSinceMidnight := time.Duration(hour)*time.Hour + time.Duration(min)*time.Minute + time.Duration(sec)*time.Second
+
+	// Check memcache
+	cacheName := "arrivalCache:" + stopNumString + ":" + filterTime.Weekday().String()
+	if _, memError := memcache.Gob.Get(c, cacheName, &dest); memError == memcache.ErrCacheMiss {
+		// Repopulate memcache
+		// Query for arrival
+		parent := datastore.NewKey(c, "Stop", "", stopNum, nil)
+		q := datastore.NewQuery("Arrival").Ancestor(parent)
+		//q = q.Filter("Scheduled >=", durationSinceMidnight)
+		q = q.Filter(filterTime.Weekday().String()+" =", true)
+		q = q.Order("Scheduled")
+
+		_, getError := q.GetAll(c, &dest)
+		if getError != nil {
+			arrivalChan <- nil
+			return // Probably invalid stop num
+		}
+
+		// Add to memcache
+		item := &memcache.Item{
+			Key:    cacheName,
+			Object: dest,
+		}
+
+		go memcache.Gob.Set(c, item) // We do enough work below that this will finish
+
+		// Filter based on filterTime
+		arrivalChan <- filterArrivalsOnTime(durationSinceMidnight, dest)
+
+	} else if memError == memcache.ErrServerError {
+		arrivalChan <- nil
+	} else {
+		// Filter based on filterTime
+		arrivalChan <- filterArrivalsOnTime(durationSinceMidnight, dest)
+	}
+}
+
+func prepareArrivalOutput(c appengine.Context, val *Arrival, eta *ETA, filterTime *time.Time) map[string]string {
+
+	// Get route name -- might take a while so send result on channel
+	nameChan := make(chan string, 1)
+	go func(arr *Arrival) {
+		if arr.routeName == "" {
+			// Get route
+			var route Route
+			datastore.Get(c, arr.Route, &route)
+			nameChan <- route.Name
+		} else {
+			nameChan <- arr.routeName
+		}
+	}(val)
+
+	// Use this arrival to determine information
+	scheduled := val.Scheduled
+	expected := scheduled
+
+	// Realtime update
+	if eta != nil {
+		// Add eta offset
+		expected = eta.expected
+	}
+
+	loc, _ := time.LoadLocation("America/Los_Angeles")
+
+	//Convert to times
+	midnight := time.Date(filterTime.Year(), filterTime.Month(), filterTime.Day(), 0, 0, 0, 0, loc)
+	scheduledTime := midnight.Add(scheduled)
+	expectedTime := midnight.Add(expected)
+
+	m := map[string]string{
+		"Route":     <-nameChan,
+		"Scheduled": scheduledTime.Format(time.RFC822Z),
+		"Expected":  expectedTime.Format(time.RFC822Z),
+	}
+
+	return m
 }
 
 func filterArrivalsOnTime(dur time.Duration, arrivals []*Arrival) []*Arrival {
