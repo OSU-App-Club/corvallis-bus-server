@@ -13,7 +13,14 @@ import (
 	"time"
 
 	cts "github.com/cvanderschuere/go-connexionz"
+	"github.com/mjibson/goon"
 )
+
+var globalRouteNames map[int64]string
+
+func init() {
+	globalRouteNames = make(map[int64]string)
+}
 
 /*
   /arrivals (endpoint to access arrival information)
@@ -63,6 +70,8 @@ func Arrivals(c appengine.Context, w http.ResponseWriter, r *http.Request) {
 	diff := filterTime.Sub(currentTime)
 	checkCTS := diff >= 0 && diff < 30*time.Minute
 
+	g := goon.NewGoon(r)
+
 	// Load arrivals from datastore add/or CTS
 	var wg sync.WaitGroup
 	locker := new(sync.Mutex)
@@ -73,7 +82,7 @@ func Arrivals(c appengine.Context, w http.ResponseWriter, r *http.Request) {
 		go func(s string) {
 			defer wg.Done()
 			stopNum, _ := strconv.ParseInt(s, 10, 64)
-			stopArrivals := findArrivalsForStop(c, stopNum, checkCTS, &filterTime)
+			stopArrivals := findArrivalsForStop(c, g, stopNum, checkCTS, &filterTime)
 
 			// Add to map -- mutex protected
 			locker.Lock()
@@ -97,19 +106,19 @@ func Arrivals(c appengine.Context, w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, string(data))
 }
 
-func findArrivalsForStop(c appengine.Context, stopNum int64, checkCTS bool, filterTime *time.Time) []map[string]string {
+func findArrivalsForStop(c appengine.Context, g *goon.Goon, stopNum int64, checkCTS bool, filterTime *time.Time) []map[string]string {
 
 	// Realtime
 	realtimeETAs := make(chan []*ETA, 1)
 	if checkCTS {
-		go getRealtimeArrivals(c, stopNum, filterTime, realtimeETAs)
+		go getRealtimeArrivals(c, g, stopNum, filterTime, realtimeETAs)
 	} else {
 		realtimeETAs <- nil
 	}
 
 	// Schedule
 	scheduledArrivals := make(chan []*Arrival, 1)
-	getArrivalsFromDatastore(c, stopNum, filterTime, scheduledArrivals)
+	getArrivalsFromDatastore(c, g, stopNum, filterTime, scheduledArrivals)
 
 	// Sync point -- make sure all data is known
 	scheds := <-scheduledArrivals
@@ -144,9 +153,9 @@ func findArrivalsForStop(c appengine.Context, stopNum int64, checkCTS bool, filt
 			defer wg.Done()
 			var o map[string]string
 			if len(etas) > j {
-				o = prepareArrivalOutput(c, arr, etas[j], filterTime)
+				o = prepareArrivalOutput(c, g, a, etas[j], filterTime)
 			} else {
-				o = prepareArrivalOutput(c, arr, nil, filterTime)
+				o = prepareArrivalOutput(c, g, a, nil, filterTime)
 			}
 			arrivalOutput[j] = o // Concurrent write
 		}(i, arr)
@@ -157,7 +166,7 @@ func findArrivalsForStop(c appengine.Context, stopNum int64, checkCTS bool, filt
 }
 
 // Fetch realtime info from connexionz
-func getRealtimeArrivals(c appengine.Context, stopNum int64, filterTime *time.Time, etaChan chan []*ETA) {
+func getRealtimeArrivals(c appengine.Context, g *goon.Goon, stopNum int64, filterTime *time.Time, etaChan chan []*ETA) {
 	client := cts.New(c, baseURL)
 
 	plat := &cts.Platform{Number: stopNum}
@@ -188,7 +197,7 @@ func getRealtimeArrivals(c appengine.Context, stopNum int64, filterTime *time.Ti
 	etaChan <- ctsEstimates
 }
 
-func getArrivalsFromDatastore(c appengine.Context, stopNum int64, filterTime *time.Time, arrivalChan chan []*Arrival) {
+func getArrivalsFromDatastore(c appengine.Context, g *goon.Goon, stopNum int64, filterTime *time.Time, arrivalChan chan []*Arrival) {
 	var dest []*Arrival
 	stopNumString := strconv.FormatInt(stopNum, 10)
 
@@ -232,16 +241,21 @@ func getArrivalsFromDatastore(c appengine.Context, stopNum int64, filterTime *ti
 	}
 }
 
-func prepareArrivalOutput(c appengine.Context, val *Arrival, eta *ETA, filterTime *time.Time) map[string]string {
+func prepareArrivalOutput(c appengine.Context, g *goon.Goon, val *Arrival, eta *ETA, filterTime *time.Time) map[string]string {
 
 	// Get route name -- might take a while so send result on channel
 	nameChan := make(chan string, 1)
 	go func(arr *Arrival) {
 		if arr.routeName == "" {
-			// Get route
-			var route Route
-			datastore.Get(c, arr.Route, &route)
-			nameChan <- route.Name
+			// Get route -- try global first
+			if savedName, ok := globalRouteNames[val.Route.IntID()]; !ok {
+				var route Route
+				datastore.Get(c, val.Route, &route)
+				nameChan <- route.Name
+				globalRouteNames[val.Route.IntID()] = route.Name
+			} else {
+				nameChan <- savedName
+			}
 		} else {
 			nameChan <- arr.routeName
 		}
