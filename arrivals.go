@@ -124,11 +124,16 @@ func findArrivalsForStop(c appengine.Context, g *goon.Goon, stopNum int64, check
 	scheds := <-scheduledArrivals
 	etas := <-realtimeETAs
 
-	// Check whether we should drop the first scheduled arrival or not
-	// Bias towards buses being late -- expected is not more than 50 min late
-	if len(etas) > 0 && len(scheds) > 0 && etas[0].expected < (scheds[0].Scheduled+50*time.Minute) {
-		// Within 50 minutes late ... don't drop
+	// We need to combine eta and sched -- typical case
+	if len(etas) > 0 && len(scheds) > 1 {
+		// expected should be between the two scheduled
+		if etas[0].expected >= scheds[1].Scheduled {
+			scheds = scheds[1:]
+		}
+	} else if len(etas) > 0 && len(scheds) == 1 {
+		// Match them up regardless of time
 	} else if len(scheds) > 0 {
+		// no eta -- include schedule after current time
 		scheds = scheds[1:]
 	}
 

@@ -176,7 +176,7 @@ func stopsInRadius(c appengine.Context, lat, lng float64, radiusMeters int) ([]*
 			Object: sortedGeohash,
 		}
 
-		memcache.Gob.SetMulti(c, []*memcache.Item{item1, item2})
+		go memcache.Gob.SetMulti(c, []*memcache.Item{item1, item2})
 	}
 
 	// Determine geohash for given position
@@ -293,8 +293,11 @@ func getStopsWithKeys(c appengine.Context, keys []*datastore.Key) ([]*Stop, erro
 					Object: stop,
 				}
 
-				memcache.Gob.Set(c, item) // We do enough work below that this will finish
-
+				wg.Add(1)
+				go func() {
+					defer wg.Done()
+					memcache.Gob.Set(c, item) // We do enough work below that this will finish
+				}()
 			}
 
 			// Add to list
@@ -306,16 +309,5 @@ func getStopsWithKeys(c appengine.Context, keys []*datastore.Key) ([]*Stop, erro
 
 	wg.Wait()
 
-	/*
-	   for i := 0; i < len(keys); i++ {
-	     stops[i] = new(Stop)
-	   }
-
-	   err := datastore.GetMulti(c, keys, stops)
-	   if err != nil {
-	     c.Debugf("Get Stops Error: ", keys)
-	     return nil, err
-	   }
-	*/
 	return stops, nil
 }
