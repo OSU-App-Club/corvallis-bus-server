@@ -4,7 +4,8 @@ runtime: go
 api_version: go1
 
 automatic_scaling:
- max_concurrent_requests: 100
+ max_concurrent_requests: 500
+ min_idle_instances: 1
 
 handlers:
 - url: /.*

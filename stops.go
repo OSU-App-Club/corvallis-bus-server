@@ -146,7 +146,7 @@ func stopsInRadius(c appengine.Context, lat, lng float64, radiusMeters int) ([]*
 
 		// Get all stops -- only coordinates
 		stops := []Stop{}
-		keys, err := datastore.NewQuery("Stop").GetAll(c, &stops)
+		keys, err := datastore.NewQuery("Stop").Project("Lat", "Long").GetAll(c, &stops)
 		if err != nil {
 			c.Debugf("Stop QUERY ERROR", stops)
 			return nil, err
