@@ -46,6 +46,9 @@ func Arrivals(c appengine.Context, w http.ResponseWriter, r *http.Request) {
 	if len(sepStops) == 0 || sepStops[0] == "" {
 		http.Error(w, "Missing required paramater: stops", 400)
 		return
+	} else if len(sepStops) > 20 {
+		http.Error(w, "Maximum of 20 stops exceeded", 400)
+		return
 	}
 
 	// Use date input if avaliable
@@ -114,6 +117,7 @@ func findArrivalsForStop(c appengine.Context, g *goon.Goon, stopNum int64, check
 		go getRealtimeArrivals(c, g, stopNum, filterTime, realtimeETAs)
 	} else {
 		realtimeETAs <- nil
+		close(realtimeETAs)
 	}
 
 	// Schedule
@@ -200,6 +204,7 @@ func getRealtimeArrivals(c appengine.Context, g *goon.Goon, stopNum int64, filte
 	}
 
 	etaChan <- ctsEstimates
+	close(etaChan)
 }
 
 func getArrivalsFromDatastore(c appengine.Context, g *goon.Goon, stopNum int64, filterTime *time.Time, arrivalChan chan []*Arrival) {
@@ -244,6 +249,8 @@ func getArrivalsFromDatastore(c appengine.Context, g *goon.Goon, stopNum int64, 
 		// Filter based on filterTime
 		arrivalChan <- filterArrivalsOnTime(durationSinceMidnight, dest)
 	}
+
+	close(arrivalChan)
 }
 
 func prepareArrivalOutput(c appengine.Context, g *goon.Goon, val *Arrival, eta *ETA, filterTime *time.Time) map[string]string {

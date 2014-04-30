@@ -12,6 +12,14 @@ import (
 	"time"
 )
 
+var globalRoutes []*Route
+var globalRouteStopsMap map[string]([]*Stop)
+
+func init() {
+	globalRoutes = []*Route{}
+	globalRouteStopsMap = make(map[string]([]*Stop))
+}
+
 /*
   /routes (endpoint to access route information)
 
@@ -41,9 +49,9 @@ func Routes(c appengine.Context, w http.ResponseWriter, r *http.Request) {
 	}
 
 	var routes []*Route
-
-	// Try to get from memcache
-	if _, memError := memcache.Gob.Get(c, cacheName, &routes); memError == memcache.ErrCacheMiss {
+	if len(globalRoutes) != 0 {
+		routes = globalRoutes // Use version from memory
+	} else if _, memError := memcache.Gob.Get(c, cacheName, &routes); memError == memcache.ErrCacheMiss {
 		// Load from datastore
 		_, err := q.GetAll(c, &routes)
 
@@ -75,6 +83,8 @@ func Routes(c appengine.Context, w http.ResponseWriter, r *http.Request) {
 		}
 
 		go memcache.Gob.Set(c, item)
+
+		globalRoutes = routes // Save in memory
 	} else if memError == memcache.ErrServerError {
 		http.Error(w, "Get Routes Error: "+memError.Error(), 500)
 	}
@@ -104,6 +114,14 @@ func Routes(c appengine.Context, w http.ResponseWriter, r *http.Request) {
 	// Load stops
 	if strings.ToLower(r.FormValue("stops")) == "true" {
 		for _, route := range routes {
+			// Check memory
+			stopsMem, ok := globalRouteStopsMap[route.Name]
+			if ok {
+				// Use this version
+				route.Path = stopsMem
+				continue
+			}
+
 			path := make([]*Stop, len(route.Stops))
 			for i, _ := range path {
 				path[i] = new(Stop)
@@ -126,6 +144,9 @@ func Routes(c appengine.Context, w http.ResponseWriter, r *http.Request) {
 					Object: path,
 				}
 				memcache.Gob.Set(c, item)
+
+				// Save in memory
+				globalRouteStopsMap[route.Name] = path
 
 			} else if memError == memcache.ErrServerError {
 				http.Error(w, "Get Path Error: "+memError.Error(), 500)
