@@ -124,6 +124,11 @@ func Stops(c appengine.Context, w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	// Prevent nil array
+	if stops == nil {
+		stops = make([]*Stop, 1)
+	}
+
 	result := map[string]interface{}{
 		"stops": stops[:limit],
 	}
