@@ -225,8 +225,6 @@ func getArrivalsFromDatastore(c appengine.Context, stopNum int64, filterTime *ti
 
 	now := time.Now()
 
-	c.Debugf("OK: %d Filter: %s Saved: %s Now: %s", ok, filterTime.Weekday().String(), savedDay, now.Weekday().String())
-
 	// Will update ever day
 	if !ok || filterTime.Weekday().String() != now.Weekday().String() || now.Weekday().String() != savedDay {
 		arrivalCacheLock.Lock()         // Lock for writting
