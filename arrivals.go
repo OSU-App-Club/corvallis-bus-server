@@ -3,7 +3,6 @@ package corvallisbus
 import (
 	"appengine"
 	"appengine/datastore"
-	"appengine/memcache"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -15,10 +14,18 @@ import (
 	cts "github.com/cvanderschuere/go-connexionz"
 )
 
+//
+// Memory Cache
+//
+var cachedArrivals map[int64]([]*Arrival)
+var curDay string
+var arrivalCacheLock *sync.RWMutex
 var globalRouteNames map[int64]string
 
 func init() {
 	globalRouteNames = make(map[int64]string)
+	cachedArrivals = make(map[int64]([]*Arrival))
+	arrivalCacheLock = new(sync.RWMutex)
 }
 
 /*
@@ -174,8 +181,8 @@ func findArrivalsForStop(c appengine.Context, stopNum int64, checkCTS bool, filt
 
 // Fetch realtime info from connexionz
 func getRealtimeArrivals(c appengine.Context, stopNum int64, filterTime *time.Time, etaChan chan []*ETA) {
-	client := cts.New(c, baseURL)
 
+	client := cts.New(c, baseURL)
 	plat := &cts.Platform{Number: stopNum}
 
 	// Make CTS call
@@ -206,21 +213,30 @@ func getRealtimeArrivals(c appengine.Context, stopNum int64, filterTime *time.Ti
 }
 
 func getArrivalsFromDatastore(c appengine.Context, stopNum int64, filterTime *time.Time, arrivalChan chan []*Arrival) {
-	var dest []*Arrival
-	stopNumString := strconv.FormatInt(stopNum, 10)
-
 	// Calc duration since midnight
 	hour, min, sec := filterTime.Clock()
 	durationSinceMidnight := time.Duration(hour)*time.Hour + time.Duration(min)*time.Minute + time.Duration(sec)*time.Second
 
-	// Check memcache
-	cacheName := "arrivalCache:" + stopNumString + ":" + filterTime.Weekday().String()
-	if _, memError := memcache.Gob.Get(c, cacheName, &dest); memError == memcache.ErrCacheMiss {
-		// Repopulate memcache
+	// Check memory cache
+	arrivalCacheLock.RLock() // Read lock's only contention during inital write
+	cachedDest, ok := cachedArrivals[stopNum]
+	savedDay := curDay
+	arrivalCacheLock.RUnlock()
+
+	now := time.Now()
+
+	c.Debugf("OK: %d Filter: %s Saved: %s Now: %s", ok, filterTime.Weekday().String(), savedDay, now.Weekday().String())
+
+	// Will update ever day
+	if !ok || filterTime.Weekday().String() != now.Weekday().String() || now.Weekday().String() != savedDay {
+		arrivalCacheLock.Lock()         // Lock for writting
+		defer arrivalCacheLock.Unlock() // Unlock for writting
+
+		// Repopulate cache
 		// Query for arrival
+		dest := []*Arrival{}
 		parent := datastore.NewKey(c, "Stop", "", stopNum, nil)
 		q := datastore.NewQuery("Arrival").Ancestor(parent)
-		//q = q.Filter("Scheduled >=", durationSinceMidnight)
 		q = q.Filter(filterTime.Weekday().String()+" =", true)
 		q = q.Order("Scheduled")
 
@@ -230,22 +246,22 @@ func getArrivalsFromDatastore(c appengine.Context, stopNum int64, filterTime *ti
 			return // Probably invalid stop num
 		}
 
-		// Add to memcache
-		item := &memcache.Item{
-			Key:    cacheName,
-			Object: dest,
+		// Save in memory -- only if today
+		if savedDay != now.Weekday().String() {
+			curDay = now.Weekday().String()               // New day
+			cachedArrivals = make(map[int64]([]*Arrival)) // clear
+			cachedArrivals[stopNum] = dest
+		} else if savedDay == filterTime.Weekday().String() {
+			cachedArrivals[stopNum] = dest
 		}
-
-		go memcache.Gob.Set(c, item) // We do enough work below that this will finish
+		// Don't update cache for days other than today
 
 		// Filter based on filterTime
 		arrivalChan <- filterArrivalsOnTime(durationSinceMidnight, dest)
 
-	} else if memError == memcache.ErrServerError {
-		arrivalChan <- nil
 	} else {
 		// Filter based on filterTime
-		arrivalChan <- filterArrivalsOnTime(durationSinceMidnight, dest)
+		arrivalChan <- filterArrivalsOnTime(durationSinceMidnight, cachedDest)
 	}
 
 	close(arrivalChan)
