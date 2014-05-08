@@ -118,7 +118,7 @@ func Stops(c appengine.Context, w http.ResponseWriter, r *http.Request) {
 		val, limErr := strconv.Atoi(r.FormValue("limit"))
 		if limErr == nil && val < limit {
 			limit = val
-		} else {
+		} else if limErr != nil {
 			http.Error(w, "Get Stops Error: "+limErr.Error(), 500)
 			return
 		}
