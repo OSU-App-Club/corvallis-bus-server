@@ -14,8 +14,13 @@ import (
 	"sync"
 
 	"github.com/kellydunn/golang-geo"
-	"github.com/pierrre/geohash"
 )
+
+//
+// Global
+//
+
+var stopLocations map[int64]*geo.Point // StopID to location point
 
 /*
   /stops (endpoint to access stop information)
@@ -100,7 +105,6 @@ func Stops(c appengine.Context, w http.ResponseWriter, r *http.Request) {
 		for i, stop := range stops {
 			stop.ID = keys[i].IntID()
 		}
-
 	}
 
 	if err != nil {
@@ -114,6 +118,9 @@ func Stops(c appengine.Context, w http.ResponseWriter, r *http.Request) {
 		val, limErr := strconv.Atoi(r.FormValue("limit"))
 		if limErr == nil && val < limit {
 			limit = val
+		} else {
+			http.Error(w, "Get Stops Error: "+limErr.Error(), 500)
+			return
 		}
 	}
 
@@ -134,114 +141,43 @@ func Stops(c appengine.Context, w http.ResponseWriter, r *http.Request) {
 }
 
 func stopsInRadius(c appengine.Context, lat, lng float64, radiusMeters int) ([]*Stop, error) {
-	// Check memcache for geohashes
-	var geohashToStop map[string]int64
-	var sortedGeohash []string
 
-	memcache.Gob.Get(c, "geohashToStop", &geohashToStop)
-	memcache.Gob.Get(c, "sortedGeohash", &sortedGeohash)
-
-	if len(geohashToStop) == 0 || len(sortedGeohash) == 0 {
-		// Need to repopulate data in memcache
-
+	// Check if we need to populate memory
+	if stopLocations == nil {
 		// Get all stops -- only coordinates
 		stops := []Stop{}
-		keys, err := datastore.NewQuery("Stop").Project("Lat", "Long").GetAll(c, &stops)
+		keys, err := datastore.NewQuery("Stop").GetAll(c, &stops)
 		if err != nil {
 			c.Debugf("Stop QUERY ERROR", stops)
 			return nil, err
 		}
 
-		// Create geohash map & slice
-		geohashToStop = make(map[string]int64)
-		sortedGeohash = make([]string, len(stops))
+		stopLocations = make(map[int64]*geo.Point)
 
 		for i, stop := range stops {
-			hash := geohash.EncodeAuto(stop.Lat, stop.Long)
-			geohashToStop[hash] = keys[i].IntID()
-			sortedGeohash[i] = hash
+			stopLocations[keys[i].IntID()] = geo.NewPoint(stop.Lat, stop.Long)
 		}
-
-		//Sort geohashes
-		sort.Sort(sort.StringSlice(sortedGeohash))
-
-		// Store in memcache -- hopefully this lasts for a long time
-		item1 := &memcache.Item{
-			Key:    "geohashToStop",
-			Object: geohashToStop,
-		}
-
-		item2 := &memcache.Item{
-			Key:    "sortedGeohash",
-			Object: sortedGeohash,
-		}
-
-		go memcache.Gob.SetMulti(c, []*memcache.Item{item1, item2})
 	}
 
 	// Determine geohash for given position
-	currentHash := geohash.EncodeAuto(lat, lng)
-
-	// Determine needed precision
-	// REF: http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-aggregations-bucket-geohashgrid-aggregation.html
-	var precision int
-	switch {
-	case radiusMeters <= 2000:
-		precision = 5 // rough precision
-	default:
-		precision = 3 // Probably enough to cover everybody -- unproved
-	}
-
-	searchFunc := func(i int) bool {
-		hash := sortedGeohash[i]
-		return strings.HasPrefix(currentHash, hash[:precision])
-	}
-
-	// Search for geohash of given position
-	startRange := sort.Search(len(sortedGeohash), searchFunc)
-
-	if startRange == len(sortedGeohash) {
-		// Not found
-		return []*Stop{}, nil
-	}
-
-	// Determine end of range
-	var endRange int
-	for endRange = startRange + 1; endRange < len(sortedGeohash); endRange++ {
-		if !searchFunc(endRange) {
-			break
-		}
-	}
-
-	results := sortedGeohash[startRange:endRange]
+	currentLoc := geo.NewPoint(lat, lng)
 
 	// Create array of stopIDS
-	desiredStops := make([]*datastore.Key, len(results))
-	distances := make([]float64, len(results))
+	desiredStops := make([]*datastore.Key, len(stopLocations))
+	distances := make([]float64, len(stopLocations))
 
+	// Filter by distance
 	matchingCount := 0
-	for _, stopHash := range results {
-
-		// Decode geohashe
-		box, _ := geohash.Decode(stopHash)
-		center := box.Center()
-
-		// Determine if this stop matches radius
-		stop := geo.NewPoint(center.Lat, center.Lon)
-		input := geo.NewPoint(lat, lng)
-
-		dist := stop.GreatCircleDistance(input) * 1000.0 // In meters
-
+	for key, loc := range stopLocations {
+		dist := currentLoc.GreatCircleDistance(loc) * 1000.0 // In meters
 		if int(dist) <= radiusMeters {
-			k := datastore.NewKey(c, "Stop", "", geohashToStop[stopHash], nil)
-			desiredStops[matchingCount] = k
+			desiredStops[matchingCount] = datastore.NewKey(c, "Stop", "", key, nil)
 			distances[matchingCount] = dist
 			matchingCount++
 		}
 	}
 
 	// Sort by distance closest to farthest
-
 	var stops []*Stop
 	if matchingCount > 0 {
 		var err error
@@ -304,7 +240,6 @@ func getStopsWithKeys(c appengine.Context, keys []*datastore.Key) ([]*Stop, erro
 			stops[idx] = stop
 
 		}(i, key)
-
 	}
 
 	wg.Wait()

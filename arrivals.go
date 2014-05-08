@@ -13,7 +13,6 @@ import (
 	"time"
 
 	cts "github.com/cvanderschuere/go-connexionz"
-	"github.com/mjibson/goon"
 )
 
 var globalRouteNames map[int64]string
@@ -43,6 +42,7 @@ func Arrivals(c appengine.Context, w http.ResponseWriter, r *http.Request) {
 	}
 
 	sepStops := strings.Split(r.FormValue("stops"), ",")
+	c.Debugf("Stops:", sepStops)
 	if len(sepStops) == 0 || sepStops[0] == "" {
 		http.Error(w, "Missing required paramater: stops", 400)
 		return
@@ -73,8 +73,6 @@ func Arrivals(c appengine.Context, w http.ResponseWriter, r *http.Request) {
 	diff := filterTime.Sub(currentTime)
 	checkCTS := diff >= 0 && diff < 30*time.Minute
 
-	g := goon.NewGoon(r)
-
 	// Load arrivals from datastore add/or CTS
 	var wg sync.WaitGroup
 	locker := new(sync.Mutex)
@@ -85,7 +83,7 @@ func Arrivals(c appengine.Context, w http.ResponseWriter, r *http.Request) {
 		go func(s string) {
 			defer wg.Done()
 			stopNum, _ := strconv.ParseInt(s, 10, 64)
-			stopArrivals := findArrivalsForStop(c, g, stopNum, checkCTS, &filterTime)
+			stopArrivals := findArrivalsForStop(c, stopNum, checkCTS, &filterTime)
 
 			// Add to map -- mutex protected
 			locker.Lock()
@@ -109,12 +107,12 @@ func Arrivals(c appengine.Context, w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, string(data))
 }
 
-func findArrivalsForStop(c appengine.Context, g *goon.Goon, stopNum int64, checkCTS bool, filterTime *time.Time) []map[string]string {
+func findArrivalsForStop(c appengine.Context, stopNum int64, checkCTS bool, filterTime *time.Time) []map[string]string {
 
 	// Realtime
 	realtimeETAs := make(chan []*ETA, 1)
 	if checkCTS {
-		go getRealtimeArrivals(c, g, stopNum, filterTime, realtimeETAs)
+		go getRealtimeArrivals(c, stopNum, filterTime, realtimeETAs)
 	} else {
 		realtimeETAs <- nil
 		close(realtimeETAs)
@@ -122,7 +120,7 @@ func findArrivalsForStop(c appengine.Context, g *goon.Goon, stopNum int64, check
 
 	// Schedule
 	scheduledArrivals := make(chan []*Arrival, 1)
-	getArrivalsFromDatastore(c, g, stopNum, filterTime, scheduledArrivals)
+	getArrivalsFromDatastore(c, stopNum, filterTime, scheduledArrivals)
 
 	// Sync point -- make sure all data is known
 	scheds := <-scheduledArrivals
@@ -162,9 +160,9 @@ func findArrivalsForStop(c appengine.Context, g *goon.Goon, stopNum int64, check
 			defer wg.Done()
 			var o map[string]string
 			if len(etas) > j {
-				o = prepareArrivalOutput(c, g, a, etas[j], filterTime)
+				o = prepareArrivalOutput(c, a, etas[j], filterTime)
 			} else {
-				o = prepareArrivalOutput(c, g, a, nil, filterTime)
+				o = prepareArrivalOutput(c, a, nil, filterTime)
 			}
 			arrivalOutput[j] = o // Concurrent write
 		}(i, arr)
@@ -175,7 +173,7 @@ func findArrivalsForStop(c appengine.Context, g *goon.Goon, stopNum int64, check
 }
 
 // Fetch realtime info from connexionz
-func getRealtimeArrivals(c appengine.Context, g *goon.Goon, stopNum int64, filterTime *time.Time, etaChan chan []*ETA) {
+func getRealtimeArrivals(c appengine.Context, stopNum int64, filterTime *time.Time, etaChan chan []*ETA) {
 	client := cts.New(c, baseURL)
 
 	plat := &cts.Platform{Number: stopNum}
@@ -207,7 +205,7 @@ func getRealtimeArrivals(c appengine.Context, g *goon.Goon, stopNum int64, filte
 	close(etaChan)
 }
 
-func getArrivalsFromDatastore(c appengine.Context, g *goon.Goon, stopNum int64, filterTime *time.Time, arrivalChan chan []*Arrival) {
+func getArrivalsFromDatastore(c appengine.Context, stopNum int64, filterTime *time.Time, arrivalChan chan []*Arrival) {
 	var dest []*Arrival
 	stopNumString := strconv.FormatInt(stopNum, 10)
 
@@ -253,7 +251,7 @@ func getArrivalsFromDatastore(c appengine.Context, g *goon.Goon, stopNum int64, 
 	close(arrivalChan)
 }
 
-func prepareArrivalOutput(c appengine.Context, g *goon.Goon, val *Arrival, eta *ETA, filterTime *time.Time) map[string]string {
+func prepareArrivalOutput(c appengine.Context, val *Arrival, eta *ETA, filterTime *time.Time) map[string]string {
 
 	// Get route name -- might take a while so send result on channel
 	nameChan := make(chan string, 1)
