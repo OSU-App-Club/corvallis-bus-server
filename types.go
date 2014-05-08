@@ -44,7 +44,7 @@ type Route struct {
 
 type Stop struct {
 	// Key equal to platform number (int) -- same value posted at bus signs
-	ID int64 `datastore:"-" json:"-"`
+	ID int64 `datastore:"-"`
 
 	Name string
 
