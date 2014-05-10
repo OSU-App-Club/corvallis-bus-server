@@ -223,15 +223,13 @@ func getArrivalsFromDatastore(c appengine.Context, stopNum int64, filterTime *ti
 	savedDay := curDay
 	arrivalCacheLock.RUnlock()
 
-	loc, _ := time.LoadLocation("America/Los_Angeles")
-	now := time.Now().In(loc)
+	now := time.Now()
 
-	// Will update every day
-	if ok && savedDay == time.Now().Weekday().String() {
-		// Filter based on filterTime
-		arrivalChan <- filterArrivalsOnTime(durationSinceMidnight, cachedDest)
-	} else {
-		c.Infof("Repopulate for %d: %s", stopNum, filterTime.Weekday().String(), ok, savedDay)
+	// Will update ever day
+	if !ok || filterTime.Weekday().String() != now.Weekday().String() || now.Weekday().String() != savedDay {
+		arrivalCacheLock.Lock()         // Lock for writting
+		defer arrivalCacheLock.Unlock() // Unlock for writting
+
 		// Repopulate cache
 		// Query for arrival
 		dest := []*Arrival{}
@@ -248,23 +246,22 @@ func getArrivalsFromDatastore(c appengine.Context, stopNum int64, filterTime *ti
 
 		// Save in memory -- only if today
 		if savedDay != now.Weekday().String() {
-			arrivalCacheLock.Lock() // Lock for writting
-
 			curDay = now.Weekday().String()               // New day
 			cachedArrivals = make(map[int64]([]*Arrival)) // clear
 			cachedArrivals[stopNum] = dest
-
-			arrivalCacheLock.Unlock() // Unlock for writting
 		} else if savedDay == filterTime.Weekday().String() {
-			arrivalCacheLock.Lock() // Lock for writting
 			cachedArrivals[stopNum] = dest
-			arrivalCacheLock.Unlock() // Unlock for writting
 		}
 		// Don't update cache for days other than today
 
 		// Filter based on filterTime
 		arrivalChan <- filterArrivalsOnTime(durationSinceMidnight, dest)
+
+	} else {
+		// Filter based on filterTime
+		arrivalChan <- filterArrivalsOnTime(durationSinceMidnight, cachedDest)
 	}
+
 	close(arrivalChan)
 }
 
