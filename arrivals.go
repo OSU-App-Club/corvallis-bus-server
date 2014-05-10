@@ -152,23 +152,17 @@ func findArrivalsForStop(c appengine.Context, stopNum int64, checkCTS bool, filt
 	}
 
 	// Create arrivals
-	var wg sync.WaitGroup
 	arrivalOutput := make([](map[string]string), len(scheds))
 	for i, arr := range scheds {
-		wg.Add(1)
-		go func(j int, a *Arrival) {
-			defer wg.Done()
-			var o map[string]string
-			if len(etas) > j {
-				o = prepareArrivalOutput(c, a, etas[j], filterTime)
-			} else {
-				o = prepareArrivalOutput(c, a, nil, filterTime)
-			}
-			arrivalOutput[j] = o // Concurrent write
-		}(i, arr)
+		var o map[string]string
+		if len(etas) > i {
+			o = prepareArrivalOutput(c, arr, etas[i], filterTime)
+		} else {
+			o = prepareArrivalOutput(c, arr, nil, filterTime)
+		}
+		arrivalOutput[i] = o // Concurrent write
 	}
 
-	wg.Wait() // Wait until each is finished
 	return arrivalOutput
 }
 
@@ -213,6 +207,8 @@ func getArrivalsFromDatastore(c appengine.Context, stopNum int64, filterTime *ti
 	hour, min, sec := filterTime.Clock()
 	durationSinceMidnight := time.Duration(hour)*time.Hour + time.Duration(min)*time.Minute + time.Duration(sec)*time.Second
 
+	fin := make(chan bool, 1)
+
 	// Check memcache
 	cacheName := "arrivalCache:" + stopNumString + ":" + filterTime.Weekday().String()
 	if _, memError := memcache.Gob.Get(c, cacheName, &dest); memError == memcache.ErrCacheMiss {
@@ -236,40 +232,55 @@ func getArrivalsFromDatastore(c appengine.Context, stopNum int64, filterTime *ti
 			Object: dest,
 		}
 
-		memcache.Gob.Set(c, item) // We do enough work below that this will finish
+		go func() {
+			memcache.Gob.Set(c, item) // We do enough work below that this will finish
+			fin <- true
+		}()
+
+		fin <- false
 
 		// Filter based on filterTime
-		arrivalChan <- filterArrivalsOnTime(durationSinceMidnight, dest)
+		dest = filterArrivalsOnTime(durationSinceMidnight, dest)
 
 	} else if memError == memcache.ErrServerError {
+		fin <- false
 		arrivalChan <- nil
+		close(arrivalChan)
+		return
 	} else {
+		fin <- false
 		// Filter based on filterTime
-		arrivalChan <- filterArrivalsOnTime(durationSinceMidnight, dest)
+		dest = filterArrivalsOnTime(durationSinceMidnight, dest)
 	}
+
+	wg := new(sync.WaitGroup)
+	for _, val := range dest {
+		wg.Add(1)
+		// Determine route information
+		go func(arr *Arrival) {
+			defer wg.Done()
+
+			// Get route -- try global first
+			if savedName, ok := globalRouteNames[arr.Route.IntID()]; !ok {
+				var route Route
+				datastore.Get(c, arr.Route, &route)
+				arr.routeName = route.Name
+				globalRouteNames[arr.Route.IntID()] = route.Name
+			} else {
+				arr.routeName = savedName
+			}
+		}(val)
+	}
+
+	wg.Wait()
+
+	<-fin               // Wait for memcache set
+	arrivalChan <- dest // Send back arrivals
 
 	close(arrivalChan)
 }
 
 func prepareArrivalOutput(c appengine.Context, val *Arrival, eta *ETA, filterTime *time.Time) map[string]string {
-
-	// Get route name -- might take a while so send result on channel
-	nameChan := make(chan string, 1)
-	go func(arr *Arrival) {
-		if arr.routeName == "" {
-			// Get route -- try global first
-			if savedName, ok := globalRouteNames[val.Route.IntID()]; !ok {
-				var route Route
-				datastore.Get(c, val.Route, &route)
-				nameChan <- route.Name
-				globalRouteNames[val.Route.IntID()] = route.Name
-			} else {
-				nameChan <- savedName
-			}
-		} else {
-			nameChan <- arr.routeName
-		}
-	}(val)
 
 	// Use this arrival to determine information
 	scheduled := val.Scheduled
@@ -289,7 +300,7 @@ func prepareArrivalOutput(c appengine.Context, val *Arrival, eta *ETA, filterTim
 	expectedTime := midnight.Add(expected)
 
 	m := map[string]string{
-		"Route":     <-nameChan,
+		"Route":     val.routeName,
 		"Scheduled": scheduledTime.Format(time.RFC822Z),
 		"Expected":  expectedTime.Format(time.RFC822Z),
 	}
