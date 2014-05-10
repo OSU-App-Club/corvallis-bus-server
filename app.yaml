@@ -1,12 +1,11 @@
 application: corvallis-bus
-version: 1-1
+version: 1
 runtime: go
 api_version: go1
 
 automatic_scaling:
- max_concurrent_requests: 200
+ max_concurrent_requests: 500
  min_idle_instances: 1
- min_pending_latency: 400ms
 
 handlers:
 - url: /.*
