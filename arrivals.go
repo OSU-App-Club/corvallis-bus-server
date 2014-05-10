@@ -236,7 +236,7 @@ func getArrivalsFromDatastore(c appengine.Context, stopNum int64, filterTime *ti
 			Object: dest,
 		}
 
-		go memcache.Gob.Set(c, item) // We do enough work below that this will finish
+		memcache.Gob.Set(c, item) // We do enough work below that this will finish
 
 		// Filter based on filterTime
 		arrivalChan <- filterArrivalsOnTime(durationSinceMidnight, dest)
