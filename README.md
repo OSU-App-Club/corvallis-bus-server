@@ -1,7 +1,7 @@
 Corvallis Bus API
 =============
 
-A API service for the [Corvallis Transit System](www.corvallistransit.com)
+A API service for the [Corvallis Transit System](http://www.corvallistransit.com)
 
 [![GoDoc](https://godoc.org/github.com/OSU-App-Club/corvallis-bus-server?status.png)](https://godoc.org/github.com/OSU-App-Club/corvallis-bus-server)
 
