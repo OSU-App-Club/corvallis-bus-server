@@ -1,12 +1,11 @@
 Corvallis Bus API
 =============
 
-A API service for the [Corvallis Transit System](http://www.corvallistransit.com)
+An API service for the [Corvallis Transit System](http://www.corvallistransit.com)
 
 [![GoDoc](https://godoc.org/github.com/OSU-App-Club/corvallis-bus-server?status.png)](https://godoc.org/github.com/OSU-App-Club/corvallis-bus-server)
 
 The basic documentation can be found on [GoDoc](http://godoc.org/github.com/OSU-App-Club/corvallis-bus-server)
-
 
 # Usage
 
@@ -19,7 +18,7 @@ This API service is an HTTP GET based set of web services
 
   * Default: returns nothing
   * Params:
-    1. stops -- comma delimited list of stop ids (required); Default: ""
+    1. stops -- comma delimited list of stop ids (required & limited to 20 ids); Default: ""
     2. date -- date in RFC822Z format; Default: "currentDate"
 
   * Response:
