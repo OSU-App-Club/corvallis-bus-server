@@ -1,13 +1,13 @@
 package corvallisbus
 
 import (
-	"appengine"
-	"appengine/datastore"
 	"archive/zip"
 	"bytes"
 	"encoding/csv"
+
+	"appengine"
+	"appengine/datastore"
 	//"github.com/jlaffaye/ftp"
-	"appengine/urlfetch"
 	"io"
 	"io/ioutil"
 	"os"
@@ -15,6 +15,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"appengine/urlfetch"
 )
 
 /*
@@ -227,7 +229,11 @@ func updateRoutes(c appengine.Context, r *csv.Reader, keyMap map[string]*datasto
 			continue //No matching route in connexionz
 		}
 
-		route := routeMap[key] // Route by Connexionz name
+		route, ok2 := routeMap[key] // Route by Connexionz name
+
+		if !ok2 {
+			continue //No matching route
+		}
 
 		//Update information
 		route.AdditionalName = record[3]
