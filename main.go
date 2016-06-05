@@ -1,7 +1,7 @@
 package corvallisbus
 
 import (
-	"github.com/mjibson/appstats"
+	"gopkg.in/mjibson/v1/appstats"
 	"net/http"
 )
 

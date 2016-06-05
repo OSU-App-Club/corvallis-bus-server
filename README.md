@@ -7,6 +7,19 @@ An API service for the [Corvallis Transit System](http://www.corvallistransit.co
 
 The basic documentation can be found on [GoDoc](http://godoc.org/github.com/OSU-App-Club/corvallis-bus-server)
 
+# Prerequisites 
+ * Go (the programming language) 
+ * Google App Engine SDK for Go
+ * Add these to your path (optional)
+
+# Getting started
+    (Install prerequisites)
+    git clone https://github.com/holmwell/corvallis-bus-server
+    cd corvallis-bus-server
+    goapp serve
+
+This will start a server at [http://localhost:8080](http://localhost:8080).
+
 # Usage
 
 This API service is an HTTP GET based set of web services
