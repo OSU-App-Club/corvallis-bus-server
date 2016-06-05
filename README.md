@@ -14,7 +14,7 @@ The basic documentation can be found on [GoDoc](http://godoc.org/github.com/OSU-
 
 # Getting started
     (Install prerequisites)
-    git clone https://github.com/holmwell/corvallis-bus-server
+    git clone https://github.com/OSU-App-Club/corvallis-bus-server
     cd corvallis-bus-server
     goapp serve
 
